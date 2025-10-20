@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PropertyType {
+  RENT
+  BUY
+  LODGE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  firstName     String?
+  lastName      String?
+  avatar        String?
+  phone         String?
+  bio           String?
+  verified      Boolean   @default(false)
+  isHost        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  properties    Property[]
+  bookings      Booking[]
+  reviews       Review[]
+  favorites     Favorite[]
+  
+  @@map("users")
+}
+
+model Property {
+  id            String       @id @default(cuid())
+  title         String
+  description   String       @db.Text
+  propertyType  PropertyType
+  
+  // Location
+  address       String
+  city          String
+  state         String?
+  country       String
+  zipCode       String?
+  latitude      Float
+  longitude     Float
+  
+  // Pricing
+  price         Float
+  currency      String       @default("KSH")
+  pricePeriod   String?      // "night", "week", "month", "total"
+  
+  // Images
+  images        String[]     // Array of image URLs
+  
+  // Amenities
+  amenities     String[]     // Array of amenity names
+  
+  // Rooms
+  bedrooms      Int
+  bathrooms     Int
+  maxGuests     Int
+  
+  // Metadata
+  featured      Boolean      @default(false)
+  rating        Float        @default(0)
+  reviewCount   Int          @default(0)
+  
+  // Availability
+  availability  DateTime[]   // Array of available dates
+  
+  // Relations
+  hostId        String
+  host          User         @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
+  reviews       Review[]
+  favorites     Favorite[]
+  
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  @@index([propertyType])
+  @@index([city])
+  @@index([hostId])
+  @@index([featured])
+  @@map("properties")
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  
+  // Booking details
+  checkIn         DateTime
+  checkOut        DateTime
+  guests          Int
+  totalPrice      Float
+  currency        String        @default("KSH")
+  status          BookingStatus @default(PENDING)
+  specialRequests String?       @db.Text
+  
+  // Relations
+  propertyId      String
+  property        Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([propertyId])
+  @@index([userId])
+  @@index([status])
+  @@map("bookings")
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  rating      Int      // 1-5
+  comment     String   @db.Text
+  helpful     Int      @default(0)
+  
+  // Relations
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([propertyId])
+  @@index([userId])
+  @@map("reviews")
+}
+
+model Favorite {
+  id          String   @id @default(cuid())
+  
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  
+  @@unique([userId, propertyId])
+  @@index([userId])
+  @@index([propertyId])
+  @@map("favorites")
+}
