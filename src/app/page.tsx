@@ -33,10 +33,10 @@ async function getFeaturedProperties() {
 }
 
 const popularDestinations = [
-  { name: 'Nairobi', count: 245, image: '/images/destinations/nairobi.jpg' },
-  { name: 'Mombasa', count: 189, image: '/images/destinations/mombasa.jpg' },
-  { name: 'Kisumu', count: 127, image: '/images/destinations/kisumu.jpg' },
-  { name: 'Nakuru', count: 98, image: '/images/destinations/nakuru.jpg' },
+  { name: 'Nairobi', count: 245, image: 'https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=800&h=600&fit=crop&q=80' },
+  { name: 'Mombasa', count: 189, image: 'https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop&q=80' },
+  { name: 'Kisumu', count: 127, image: 'https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=800&h=600&fit=crop&q=80' },
+  { name: 'Nakuru', count: 98, image: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&h=600&fit=crop&q=80' },
 ];
 
 export default async function HomePage() {
