@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
