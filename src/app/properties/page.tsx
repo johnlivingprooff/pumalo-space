@@ -2,6 +2,7 @@ import React from 'react';
 import { PropertyCard } from '@/components/properties/PropertyCard';
 import prisma from '@/lib/prisma';
 import { PropertyType } from '@prisma/client';
+import { FiltersBar } from '@/components/properties/FiltersBar';
 
 interface SearchParams {
   type?: string;
@@ -98,7 +99,7 @@ export default async function PropertiesPage({
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {searchParams.type 
+            {searchParams.type
               ? `Properties for ${searchParams.type.charAt(0).toUpperCase() + searchParams.type.slice(1)}`
               : 'All Properties'
             }
@@ -108,126 +109,26 @@ export default async function PropertiesPage({
           </p>
         </div>
       </div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Filters Sidebar */}
+          {/* Filters Sidebar (sticky on desktop) */}
           <aside className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
-              
-              <form className="space-y-6">
-                {/* Property Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Property Type
-                  </label>
-                  <select
-                    name="type"
-                    defaultValue={searchParams.type || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
-                  >
-                    <option value="">All Types</option>
-                    <option value="rent">Rent</option>
-                    <option value="buy">Buy</option>
-                    <option value="lodge">Lodge</option>
-                  </select>
-                </div>
-                
-                {/* City */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    City
-                  </label>
-                  <select
-                    name="city"
-                    defaultValue={searchParams.city || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
-                  >
-                    <option value="">All Cities</option>
-                    {cities.map((city) => (
-                      <option key={city} value={city}>{city}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                {/* Price Range */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Price Range (KSH)
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      name="minPrice"
-                      placeholder="Min"
-                      defaultValue={searchParams.minPrice || ''}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600 placeholder:text-gray-400"
-                    />
-                    <input
-                      type="number"
-                      name="maxPrice"
-                      placeholder="Max"
-                      defaultValue={searchParams.maxPrice || ''}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600 placeholder:text-gray-400"
-                    />
-                  </div>
-                </div>
-                
-                {/* Bedrooms */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bedrooms (minimum)
-                  </label>
-                  <select
-                    name="bedrooms"
-                    defaultValue={searchParams.bedrooms || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
-                  >
-                    <option value="">Any</option>
-                    <option value="1">1+</option>
-                    <option value="2">2+</option>
-                    <option value="3">3+</option>
-                    <option value="4">4+</option>
-                  </select>
-                </div>
-                
-                {/* Bathrooms */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bathrooms (minimum)
-                  </label>
-                  <select
-                    name="bathrooms"
-                    defaultValue={searchParams.bathrooms || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
-                  >
-                    <option value="">Any</option>
-                    <option value="1">1+</option>
-                    <option value="2">2+</option>
-                    <option value="3">3+</option>
-                  </select>
-                </div>
-                
-                {/* Apply Button */}
-                <button
-                  type="submit"
-                  className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
-                >
-                  Apply Filters
-                </button>
-                
-                {/* Clear Filters */}
-                <a
-                  href="/properties"
-                  className="block w-full text-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  Clear All
-                </a>
-              </form>
+            <div className="lg:sticky lg:top-24">
+              <FiltersBar
+                cities={cities}
+                selected={{
+                  type: searchParams.type,
+                  city: searchParams.city,
+                  minPrice: searchParams.minPrice,
+                  maxPrice: searchParams.maxPrice,
+                  bedrooms: searchParams.bedrooms,
+                  bathrooms: searchParams.bathrooms,
+                }}
+              />
             </div>
           </aside>
-          
+
           {/* Properties Grid */}
           <main className="lg:col-span-3">
             {properties.length > 0 ? (

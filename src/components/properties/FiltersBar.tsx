@@ -84,85 +84,36 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
     setParam("maxPrice", max);
   };
 
-  const sections = [
-    {
-      title: "Type",
-      content: (
-        <div className="flex items-center gap-2 overflow-x-auto">
-          {[
-            { key: "rent", label: "Rent" },
-            { key: "buy", label: "Buy" },
-            { key: "lodge", label: "Lodge" },
-          ].map((opt) => (
-            <Pill key={opt.key} active={(selected.type || "") === opt.key} onClick={() => toggleParam("type", opt.key)}>
-              {opt.label}
-            </Pill>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: "City",
-      content: (
-        <div className="flex items-center gap-2 overflow-x-auto">
-          <Pill active={!selected.city} onClick={() => setParam("city", undefined)}>
-            Any
-          </Pill>
-          {cities.map((city) => (
-            <Pill key={city} active={selected.city === city} onClick={() => toggleParam("city", city)}>
-              {city}
-            </Pill>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: "Bedrooms",
-      content: (
-        <div className="flex items-center gap-2 overflow-x-auto">
-          <Pill active={!selected.bedrooms} onClick={() => setParam("bedrooms", undefined)}>
-            Any
-          </Pill>
-          {["1", "2", "3", "4"].map((num) => (
-            <Pill key={num} active={selected.bedrooms === num} onClick={() => toggleParam("bedrooms", num)}>
-              {num}+
-            </Pill>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: "Bathrooms",
-      content: (
-        <div className="flex items-center gap-2 overflow-x-auto">
-          <Pill active={!selected.bathrooms} onClick={() => setParam("bathrooms", undefined)}>
-            Any
-          </Pill>
-          {["1", "2", "3"].map((num) => (
-            <Pill key={num} active={selected.bathrooms === num} onClick={() => toggleParam("bathrooms", num)}>
-              {num}+
-            </Pill>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: "Price",
-      content: (
-        <div className="flex items-center gap-2 overflow-x-auto">
-          {priceRanges.map((range) => (
-            <Pill
-              key={range.label}
-              active={isPriceActive(range.min, range.max)}
-              onClick={() => applyPrice(range.min, range.max)}
-            >
-              {range.label}
-            </Pill>
-          ))}
-        </div>
-      ),
-    },
-  ];
+  // Compute current price dropdown value string from selected min/max
+  const getPriceValue = () => {
+    const curMin = selected.minPrice || undefined;
+    const curMax = selected.maxPrice || undefined;
+    if (!curMin && !curMax) return "";
+    if (curMin === "0" && curMax === "20000") return "0-20000";
+    if (curMin === "20000" && curMax === "50000") return "20000-50000";
+    if (curMin === "50000" && curMax === "100000") return "50000-100000";
+    if (curMin === "100000" && !curMax) return "100000-";
+    return ""; // fallback to Any if values don't match preset
+  };
+
+  const onPriceChange = (value: string) => {
+    switch (value) {
+      case "0-20000":
+        applyPrice("0", "20000");
+        break;
+      case "20000-50000":
+        applyPrice("20000", "50000");
+        break;
+      case "50000-100000":
+        applyPrice("50000", "100000");
+        break;
+      case "100000-":
+        applyPrice("100000", undefined);
+        break;
+      default:
+        applyPrice(undefined, undefined);
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
@@ -176,13 +127,99 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
           Clear all
         </button>
       </div>
-      <div className="space-y-4">
-        {sections.map((sec) => (
-          <div key={sec.title} className="space-y-2">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{sec.title}</p>
-            {sec.content}
+
+      <div className="space-y-5">
+        {/* Type - Pills */}
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Type</p>
+          <div className="flex items-center gap-2 overflow-x-auto">
+            {[
+              { key: "rent", label: "Rent" },
+              { key: "buy", label: "Buy" },
+              { key: "lodge", label: "Lodge" },
+            ].map((opt) => (
+              <Pill key={opt.key} active={(selected.type || "") === opt.key} onClick={() => toggleParam("type", opt.key)}>
+                {opt.label}
+              </Pill>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* City - Dropdown */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-city">
+            City
+          </label>
+          <select
+            id="filter-city"
+            value={selected.city || ""}
+            onChange={(e) => setParam("city", e.target.value || undefined)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
+          >
+            <option value="">All Cities</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Bedrooms - Dropdown */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-bedrooms">
+            Bedrooms (minimum)
+          </label>
+          <select
+            id="filter-bedrooms"
+            value={selected.bedrooms || ""}
+            onChange={(e) => setParam("bedrooms", e.target.value || undefined)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
+          >
+            <option value="">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+
+        {/* Bathrooms - Dropdown */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-bathrooms">
+            Bathrooms (minimum)
+          </label>
+          <select
+            id="filter-bathrooms"
+            value={selected.bathrooms || ""}
+            onChange={(e) => setParam("bathrooms", e.target.value || undefined)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
+          >
+            <option value="">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+          </select>
+        </div>
+
+        {/* Price - Dropdown */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-price">
+            Price Range (KSH)
+          </label>
+          <select
+            id="filter-price"
+            value={getPriceValue()}
+            onChange={(e) => onPriceChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
+          >
+            <option value="">Any</option>
+            <option value="0-20000">0 - 20k</option>
+            <option value="20000-50000">20k - 50k</option>
+            <option value="50000-100000">50k - 100k</option>
+            <option value="100000-">100k+</option>
+          </select>
+        </div>
       </div>
     </div>
   );
