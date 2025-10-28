@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import type { PropertyCardProps } from '@/types';
 import { Badge } from '@/components/ui/Badge';
@@ -35,12 +34,12 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       <div className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer">
         {/* Image Container */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-200">
-          <Image
-            src={imageError ? '/images/placeholder-property.jpg' : image}
+          <img
+            src={imageError ? 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80' : image}
             alt={title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
+            loading="lazy"
           />
           
           {/* Favorite Button */}

@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@stackframe/stack';
 import { Button } from '@/components/ui/Button';
+import Image from 'next/image';
 
 export const UserMenu: React.FC = () => {
   const user = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   if (!user) {
     return (
@@ -26,17 +28,27 @@ export const UserMenu: React.FC = () => {
     );
   }
   
+  // Check for profile image from various sources
+  const profileImageUrl = user.profileImageUrl || user.clientMetadata?.profileImageUrl;
+  const shouldShowImage = profileImageUrl && !imageError;
+  
   return (
     <div className="relative">
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
       >
-        {user.profileImageUrl ? (
+        {shouldShowImage ? (
           <img 
-            src={user.profileImageUrl} 
+            src={profileImageUrl} 
             alt={user.displayName || 'User'} 
             className="w-8 h-8 rounded-full object-cover"
+            onError={() => {
+              console.error('Failed to load profile image:', profileImageUrl);
+              setImageError(true);
+            }}
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
           />
         ) : (
           <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white font-medium">

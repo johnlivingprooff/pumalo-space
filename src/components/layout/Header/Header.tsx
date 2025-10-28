@@ -4,7 +4,6 @@ import React, { useState, Suspense } from 'react';
 import { Logo } from './Logo';
 import { Navigation } from './Navigation';
 import { UserMenu } from './UserMenu';
-import { Input } from '@/components/ui/Input';
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,29 +25,15 @@ export const Header: React.FC = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-8">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Logo />
           </div>
           
-          {/* Navigation - Desktop */}
-          <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
+          {/* Navigation - Centered - Desktop */}
+          <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2">
             <Navigation />
-          </div>
-          
-          {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-md">
-            <Input
-              type="search"
-              placeholder="Search properties..."
-              leftIcon={
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              }
-              fullWidth
-            />
           </div>
           
           {/* User Menu - Desktop */}
@@ -83,18 +68,6 @@ export const Header: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-4 space-y-4">
-            {/* Search - Mobile */}
-            <Input
-              type="search"
-              placeholder="Search properties..."
-              leftIcon={
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              }
-              fullWidth
-            />
-            
             {/* Navigation - Mobile */}
             <nav className="flex flex-col gap-2">
               <a href="/rent" className="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg">

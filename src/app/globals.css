@@ -59,17 +59,7 @@
     --background: #0a0a0a;
     --foreground: #F3F4F6;
   }
-  }
-
-  /* Force dark fields in all themes */
-  input, textarea, select {
-    background: #18181b !important;
-    color: #F3F4F6 !important;
-    border: 1px solid #27272a !important;
-  }
-  input::placeholder, textarea::placeholder {
-    color: #a1a1aa !important;
-  }
+}
 
 * {
   box-sizing: border-box;
@@ -168,4 +158,99 @@ body {
     padding-left: 2rem;
     padding-right: 2rem;
   }
+}
+
+/* Stack Auth Input Field Overrides - Consistent UI Design */
+/* Override Stack Auth's default input styling to match our design system */
+[data-stack-auth] input[type="text"],
+[data-stack-auth] input[type="email"],
+[data-stack-auth] input[type="password"],
+[data-stack-auth] input[type="tel"],
+[data-stack-auth] input[type="number"],
+[data-stack-auth] input[type="url"],
+[data-stack-auth] textarea,
+[data-stack-auth] select {
+  background-color: #ffffff !important;
+  color: #4B5563 !important; /* gray-600 - light gray text */
+  border-color: #D1D5DB !important; /* gray-300 */
+}
+
+[data-stack-auth] input::placeholder,
+[data-stack-auth] textarea::placeholder {
+  color: #9CA3AF !important; /* gray-400 - light gray placeholder */
+}
+
+/* Focus state */
+[data-stack-auth] input:focus,
+[data-stack-auth] textarea:focus,
+[data-stack-auth] select:focus {
+  background-color: #ffffff !important;
+  color: #4B5563 !important;
+  border-color: #0066CC !important; /* primary-500 */
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1) !important;
+}
+
+/* Additional Stack Auth container selectors */
+.stack-scope input[type="text"],
+.stack-scope input[type="email"],
+.stack-scope input[type="password"],
+.stack-scope input[type="tel"],
+.stack-scope input[type="number"],
+.stack-scope input[type="url"],
+.stack-scope textarea,
+.stack-scope select {
+  background-color: #ffffff !important;
+  color: #4B5563 !important;
+  border-color: #D1D5DB !important;
+}
+
+.stack-scope input::placeholder,
+.stack-scope textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+.stack-scope input:focus,
+.stack-scope textarea:focus,
+.stack-scope select:focus {
+  background-color: #ffffff !important;
+  color: #4B5563 !important;
+  border-color: #0066CC !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1) !important;
+}
+
+/* Stack Auth Button Overrides - Blue Background */
+[data-stack-auth] button[type="submit"],
+[data-stack-auth] button.primary,
+.stack-scope button[type="submit"],
+.stack-scope button.primary {
+  background-color: #0066CC !important; /* primary-500 */
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 600 !important;
+  transition: background-color 200ms ease !important;
+}
+
+[data-stack-auth] button[type="submit"]:hover,
+[data-stack-auth] button.primary:hover,
+.stack-scope button[type="submit"]:hover,
+.stack-scope button.primary:hover {
+  background-color: #0052A3 !important; /* primary-600 */
+}
+
+[data-stack-auth] button[type="submit"]:active,
+[data-stack-auth] button.primary:active,
+.stack-scope button[type="submit"]:active,
+.stack-scope button.primary:active {
+  background-color: #003D7A !important; /* primary-700 */
+}
+
+[data-stack-auth] button[type="submit"]:disabled,
+[data-stack-auth] button.primary:disabled,
+.stack-scope button[type="submit"]:disabled,
+.stack-scope button.primary:disabled {
+  background-color: #9CA3AF !important; /* gray-400 */
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
 }

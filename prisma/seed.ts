@@ -22,7 +22,7 @@ async function main() {
 
   console.log('✅ Created demo host user');
 
-  // Create demo properties
+  // Create demo properties with high-quality Unsplash images
   const properties = [
     {
       title: 'Modern Downtown Apartment',
@@ -37,9 +37,9 @@ async function main() {
       currency: 'KSH',
       pricePeriod: 'night',
       images: [
-        'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&h=600&fit=crop&q=80', // Modern apartment exterior, blue sky
-        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop&q=80', // Modern home interior
-        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop&q=80', // Contemporary house, blue sky
+        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop&q=80',
       ],
       amenities: ['WiFi', 'Kitchen', 'Air Conditioning', 'Parking', 'Security', 'Gym'],
       bedrooms: 2,
@@ -63,9 +63,9 @@ async function main() {
       currency: 'KSH',
       pricePeriod: 'night',
       images: [
-        'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&h=600&fit=crop&q=80', // Beachfront villa, blue sky
-        'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop&q=80', // Luxury villa with pool
-        'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop&q=80', // Coastal property, blue sky
+        'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1200&h=800&fit=crop&q=80',
       ],
       amenities: ['Pool', 'Beach Access', 'WiFi', 'Kitchen', 'BBQ', 'Ocean View', 'Parking'],
       bedrooms: 4,
@@ -88,9 +88,9 @@ async function main() {
       price: 12500000,
       currency: 'KSH',
       images: [
-        'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop&q=80', // Spacious family home, blue sky
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop&q=80', // Suburban house exterior
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=600&fit=crop&q=80', // Family home with garden
+        'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&h=800&fit=crop&q=80',
       ],
       amenities: ['Garden', 'Garage', 'WiFi', 'Security', 'Solar Panels'],
       bedrooms: 4,
@@ -114,8 +114,8 @@ async function main() {
       currency: 'KSH',
       pricePeriod: 'night',
       images: [
-        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop&q=80', // Cozy apartment building, blue sky
-        'https://images.unsplash.com/photo-1460518451285-97b6aa326961?w=800&h=600&fit=crop&q=80', // Modern studio exterior
+        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=1200&h=800&fit=crop&q=80',
       ],
       amenities: ['WiFi', 'Kitchen', 'Heating', 'Workspace'],
       bedrooms: 1,
@@ -139,9 +139,9 @@ async function main() {
       currency: 'KSH',
       pricePeriod: 'night',
       images: [
-        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop&q=80', // Luxury penthouse building, blue sky
-        'https://images.unsplash.com/photo-1567684014761-b65e2e59b9eb?w=800&h=600&fit=crop&q=80', // High-rise luxury apartment
-        'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&h=600&fit=crop&q=80', // Penthouse exterior view
+        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop&q=80',
       ],
       amenities: ['WiFi', 'Terrace', 'Gym', 'Pool', 'Concierge', 'Parking', 'City View'],
       bedrooms: 3,
@@ -165,8 +165,8 @@ async function main() {
       currency: 'KSH',
       pricePeriod: 'night',
       images: [
-        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop&q=80', // Countryside cottage, blue sky
-        'https://images.unsplash.com/photo-1464146072230-91cabc968266?w=800&h=600&fit=crop&q=80', // Rural cottage landscape
+        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&h=800&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&h=800&fit=crop&q=80',
       ],
       amenities: ['Garden', 'Fireplace', 'Kitchen', 'Hiking', 'Farm Tours'],
       bedrooms: 2,

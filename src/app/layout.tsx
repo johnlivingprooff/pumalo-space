@@ -21,6 +21,11 @@ export const metadata: Metadata = {
   description: "Discover amazing properties for rent, buy, or lodge. Your next home or vacation destination awaits on Pumalo Space.",
   keywords: ["property rental", "buy property", "lodge", "accommodation", "real estate"],
   authors: [{ name: "Pumalo Space" }],
+  icons: {
+    icon: "/logo_blue.png",
+    shortcut: "/logo_blue.png",
+    apple: "/logo_blue.png",
+  },
   openGraph: {
     title: "Pumalo Space - Find Your Perfect Property",
     description: "Discover amazing properties for rent, buy, or lodge.",

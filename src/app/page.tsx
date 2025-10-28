@@ -1,7 +1,7 @@
 import React from 'react';
 import { PropertyCard } from '@/components/properties/PropertyCard';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { HeroSection } from '@/components/HeroSection';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
 
@@ -45,73 +45,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-              Find Your Perfect Space
-            </h1>
-            <p className="text-xl sm:text-2xl mb-8 text-blue-100">
-              Discover amazing properties to rent, buy, or lodge
-            </p>
-            
-            {/* Search Bar */}
-            <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <Input
-                  placeholder="Where are you going?"
-                  leftIcon={
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  }
-                  fullWidth
-                />
-                <Input
-                  type="date"
-                  placeholder="Check-in"
-                  fullWidth
-                />
-                <Input
-                  type="number"
-                  placeholder="Guests"
-                  min="1"
-                  defaultValue="1"
-                  fullWidth
-                />
-              </div>
-              
-              {/* Quick Filters */}
-              <div className="flex flex-wrap gap-3 mb-4">
-                <Link href="/rent">
-                  <Button variant="outline" size="md">
-                    Rent
-                  </Button>
-                </Link>
-                <Link href="/buy">
-                  <Button variant="outline" size="md">
-                    Buy
-                  </Button>
-                </Link>
-                <Link href="/lodge">
-                  <Button variant="outline" size="md">
-                    Lodge
-                  </Button>
-                </Link>
-              </div>
-              
-              <Button variant="primary" size="lg" fullWidth>
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                Search Properties
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Featured Properties */}
       <section className="py-16 bg-gray-50">
@@ -137,7 +71,7 @@ export default async function HomePage() {
                     price={property.price}
                     currency={property.currency}
                     pricePerPeriod={property.pricePeriod || undefined}
-                    image={property.images[0] || '/images/placeholder-property.jpg'}
+                    image={property.images[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80'}
                     rating={property.rating}
                     reviewCount={property.reviewCount}
                     propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
