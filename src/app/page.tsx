@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/Button';
 import { HeroSection } from '@/components/HeroSection';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { FavoriteButton } from '@/components/properties/FavoriteButton';
+import { stackServerApp } from '@/stack';
+import Image from 'next/image';
 
 async function getFeaturedProperties() {
   try {
@@ -32,6 +35,18 @@ async function getFeaturedProperties() {
   }
 }
 
+async function getUserFavorites(userId: string) {
+  try {
+    const favorites = await prisma.favorite.findMany({
+      where: { userId },
+      select: { propertyId: true },
+    });
+    return new Set(favorites.map(f => f.propertyId));
+  } catch (error) {
+    return new Set<string>();
+  }
+}
+
 const popularDestinations = [
   { name: 'Nairobi', count: 245, image: 'https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=800&h=600&fit=crop&q=80' },
   { name: 'Mombasa', count: 189, image: 'https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop&q=80' },
@@ -42,12 +57,13 @@ const popularDestinations = [
 export default async function HomePage() {
   const featuredProperties = await getFeaturedProperties();
   
+  const user = await stackServerApp.getUser();
+  const favoriteIds = user ? await getUserFavorites(user.id) : new Set<string>();
+  
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <HeroSection />
 
-      {/* Featured Properties */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -75,6 +91,12 @@ export default async function HomePage() {
                     rating={property.rating}
                     reviewCount={property.reviewCount}
                     propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
+                    favoriteButton={
+                      <FavoriteButton
+                        propertyId={property.id}
+                        initialIsFavorite={favoriteIds.has(property.id)}
+                      />
+                    }
                   />
                 ))}
               </div>
@@ -100,7 +122,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Popular Destinations */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -119,6 +140,15 @@ export default async function HomePage() {
                 href={`/properties?city=${destination.name}`}
                 className="group relative aspect-[4/3] rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
               >
+                {/* Background image */}
+                <Image
+                  src={destination.image}
+                  alt={destination.name}
+                  fill
+                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover"
+                  priority={false}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                   <h3 className="text-2xl font-bold mb-1">{destination.name}</h3>
@@ -130,7 +160,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
       <section className="py-16 bg-primary-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -176,7 +205,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -195,4 +223,3 @@ export default async function HomePage() {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser } from '@stackframe/stack';
 import { Button } from '@/components/ui/Button';
@@ -10,6 +10,17 @@ export const UserMenu: React.FC = () => {
   const user = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isHost, setIsHost] = useState(false);
+
+  // Fetch user's host status
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/user/host-status?userId=${user.id}`)
+        .then((res) => res.json())
+        .then((data) => setIsHost(data.isHost || false))
+        .catch(() => setIsHost(false));
+    }
+  }, [user?.id]);
   
   if (!user) {
     return (
@@ -99,11 +110,11 @@ export const UserMenu: React.FC = () => {
           <div className="border-t border-gray-200 my-2" />
           
           <Link
-            href="/host/dashboard"
+            href={isHost ? '/host/listings' : '/host/onboarding'}
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             onClick={() => setIsDropdownOpen(false)}
           >
-            Become a Host
+            {isHost ? 'My Listings' : 'Become a Host'}
           </Link>
           
           <div className="border-t border-gray-200 my-2" />

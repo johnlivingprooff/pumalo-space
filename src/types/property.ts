@@ -54,8 +54,7 @@ export interface PropertyCardProps {
   rating: number;
   reviewCount: number;
   propertyType: PropertyType;
-  isFavorite?: boolean;
-  onFavoriteToggle?: (id: string) => void;
+    favoriteButton?: React.ReactNode;
 }
 
 export interface PropertyFilters {

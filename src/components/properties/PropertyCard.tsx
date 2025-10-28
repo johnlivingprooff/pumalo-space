@@ -16,18 +16,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   rating,
   reviewCount,
   propertyType,
-  isFavorite = false,
-  onFavoriteToggle,
+  favoriteButton,
 }) => {
-  const [favorite, setFavorite] = useState(isFavorite);
   const [imageError, setImageError] = useState(false);
-  
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setFavorite(!favorite);
-    onFavoriteToggle?.(id);
-  };
   
   return (
     <Link href={`/properties/${id}`}>
@@ -42,24 +33,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             loading="lazy"
           />
           
-          {/* Favorite Button */}
-          <button
-            onClick={handleFavoriteClick}
-            className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors z-10"
-            aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
-          >
-            <svg
-              className={`w-5 h-5 ${favorite ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-gray-700'}`}
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
-          </button>
+          {/* Favorite Button Slot */}
+          {favoriteButton}
           
           {/* Property Type Badge */}
           <div className="absolute top-3 left-3">

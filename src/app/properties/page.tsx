@@ -3,6 +3,8 @@ import { PropertyCard } from '@/components/properties/PropertyCard';
 import prisma from '@/lib/prisma';
 import { PropertyType } from '@prisma/client';
 import { FiltersBar } from '@/components/properties/FiltersBar';
+import { FavoriteButton } from '@/components/properties/FavoriteButton';
+import { stackServerApp } from '@/stack';
 
 interface SearchParams {
   type?: string;
@@ -79,12 +81,28 @@ async function getProperties(searchParams: SearchParams) {
   }
 }
 
+async function getUserFavorites(userId: string) {
+  try {
+    const favorites = await prisma.favorite.findMany({
+      where: { userId },
+      select: { propertyId: true },
+    });
+    return new Set(favorites.map(f => f.propertyId));
+  } catch (error) {
+    return new Set<string>();
+  }
+}
+
 export default async function PropertiesPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
   const properties = await getProperties(searchParams);
+  
+  // Get current user and their favorites
+  const user = await stackServerApp.getUser();
+  const favoriteIds = user ? await getUserFavorites(user.id) : new Set<string>();
   
   // Get unique cities for filter
   const allProperties = await prisma.property.findMany({
@@ -146,6 +164,12 @@ export default async function PropertiesPage({
                     rating={property.rating}
                     reviewCount={property.reviewCount}
                     propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
+                     favoriteButton={
+                       <FavoriteButton
+                         propertyId={property.id}
+                         initialIsFavorite={favoriteIds.has(property.id)}
+                       />
+                     }
                   />
                 ))}
               </div>
