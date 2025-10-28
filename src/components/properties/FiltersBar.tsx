@@ -73,56 +73,53 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
     }
   };
 
-  const applyPrice = (min?: string, max?: string) => {
-    if (!min && !max) {
-      setParams({ minPrice: undefined, maxPrice: undefined });
-      return;
-    }
-    setParams({ minPrice: min, maxPrice: max });
-  };
+  // Price slider configuration
+  const PRICE_MIN = 0;
+  const PRICE_MAX = 1000000;
+  const DEFAULT_MIN = 10000;
+  const DEFAULT_MAX = 650000;
 
-  // Local state for debounced min/max numeric inputs
-  const [minPriceInput, setMinPriceInput] = React.useState<string>(selected.minPrice || "");
-  const [maxPriceInput, setMaxPriceInput] = React.useState<string>(selected.maxPrice || "");
+  // Local state for slider values
+  const [minSlider, setMinSlider] = React.useState<number>(
+    selected.minPrice ? Number(selected.minPrice) : DEFAULT_MIN
+  );
+  const [maxSlider, setMaxSlider] = React.useState<number>(
+    selected.maxPrice ? Number(selected.maxPrice) : DEFAULT_MAX
+  );
 
-  // Keep inputs in sync with URL changes
+  // Sync local slider with URL params
   React.useEffect(() => {
-    setMinPriceInput(selected.minPrice || "");
+    setMinSlider(selected.minPrice ? Number(selected.minPrice) : DEFAULT_MIN);
   }, [selected.minPrice]);
   React.useEffect(() => {
-    setMaxPriceInput(selected.maxPrice || "");
+    setMaxSlider(selected.maxPrice ? Number(selected.maxPrice) : DEFAULT_MAX);
   }, [selected.maxPrice]);
 
-  // Validation helper message for price
-  const [priceHelp, setPriceHelp] = React.useState<string>("");
-
-  // Debounce URL updates when typing
+  // Debounced URL update for slider changes
   React.useEffect(() => {
     const handle = setTimeout(() => {
-      const sanitize = (val: string): string | undefined => {
-        const trimmed = val.trim();
-        if (trimmed === "") return undefined;
-        const n = Number(trimmed);
-        if (isNaN(n) || n < 0) return undefined;
-        return String(Math.floor(n));
-      };
-      const min = sanitize(minPriceInput);
-      const max = sanitize(maxPriceInput);
-      if (min && max) {
-        const minN = Number(min);
-        const maxN = Number(max);
-        if (maxN < minN) {
-          // Auto-correct: set max = min and show helper text
-          setParams({ minPrice: String(minN), maxPrice: String(minN) });
-          setPriceHelp("Max adjusted to match Min");
-          return;
-        }
-      }
-      setPriceHelp("");
+      const min = minSlider === DEFAULT_MIN ? undefined : String(minSlider);
+      const max = maxSlider === DEFAULT_MAX ? undefined : String(maxSlider);
       setParams({ minPrice: min, maxPrice: max });
-    }, 400);
+    }, 300);
     return () => clearTimeout(handle);
-  }, [minPriceInput, maxPriceInput]);
+  }, [minSlider, maxSlider]);
+
+  const handleMinChange = (val: number) => {
+    const clamped = Math.max(PRICE_MIN, Math.min(val, maxSlider));
+    setMinSlider(clamped);
+  };
+
+  const handleMaxChange = (val: number) => {
+    const clamped = Math.min(PRICE_MAX, Math.max(val, minSlider));
+    setMaxSlider(clamped);
+  };
+
+  const formatPrice = (val: number) => {
+    if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+    if (val >= 1000) return `${(val / 1000).toFixed(0)}k`;
+    return String(val);
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
@@ -211,34 +208,55 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
           </select>
         </div>
 
-        {/* Price - Min/Max Numeric Inputs */}
-        <div className="space-y-2">
+        {/* Price - Dual-thumb Range Slider */}
+        <div className="space-y-3">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Price Range (KSH)</p>
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              type="number"
-              inputMode="numeric"
-              min={0}
-              step={1000}
-              placeholder="Min"
-              value={minPriceInput}
-              onChange={(e) => setMinPriceInput(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600 placeholder:text-gray-400"
+          
+          {/* Display current values */}
+          <div className="flex items-center justify-between text-sm text-gray-700">
+            <span className="font-medium">{formatPrice(minSlider)}</span>
+            <span className="text-gray-400">—</span>
+            <span className="font-medium">{formatPrice(maxSlider)}</span>
+          </div>
+
+          {/* Dual-thumb slider */}
+          <div className="relative pt-2 pb-1">
+            {/* Track background */}
+            <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 rounded-full -translate-y-1/2" />
+            
+            {/* Active range highlight */}
+            <div
+              className="absolute top-1/2 h-1.5 bg-primary-600 rounded-full -translate-y-1/2"
+              style={{
+                left: `${((minSlider - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
+                right: `${100 - ((maxSlider - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
+              }}
             />
+
+            {/* Min slider thumb */}
             <input
-              type="number"
-              inputMode="numeric"
-              min={0}
-              step={1000}
-              placeholder="Max"
-              value={maxPriceInput}
-              onChange={(e) => setMaxPriceInput(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600 placeholder:text-gray-400"
+              type="range"
+              min={PRICE_MIN}
+              max={PRICE_MAX}
+              step={10000}
+              value={minSlider}
+              onChange={(e) => handleMinChange(Number(e.target.value))}
+              className="absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary-600 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md"
+              style={{ zIndex: minSlider > maxSlider - 50000 ? 5 : 3 }}
+            />
+
+            {/* Max slider thumb */}
+            <input
+              type="range"
+              min={PRICE_MIN}
+              max={PRICE_MAX}
+              step={10000}
+              value={maxSlider}
+              onChange={(e) => handleMaxChange(Number(e.target.value))}
+              className="absolute w-full h-1.5 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary-600 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-md"
+              style={{ zIndex: 4 }}
             />
           </div>
-          {priceHelp && (
-            <p className="text-xs text-amber-600 mt-1">{priceHelp}</p>
-          )}
         </div>
       </div>
     </div>
