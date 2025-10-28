@@ -116,7 +116,7 @@ export default async function HomePage() {
             {popularDestinations.map((destination) => (
               <Link
                 key={destination.name}
-                href={`/properties?location=${destination.name}`}
+                href={`/properties?city=${destination.name}`}
                 className="group relative aspect-[4/3] rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

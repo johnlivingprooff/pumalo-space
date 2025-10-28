@@ -50,6 +50,20 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
     router.push(qs ? `${pathname}?${qs}` : pathname);
   };
 
+  const setParams = (entries: Record<string, string | undefined>) => {
+    const params = new URLSearchParams(searchParams?.toString());
+    Object.entries(entries).forEach(([key, value]) => {
+      if (!value) {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+    params.delete("page");
+    const qs = params.toString();
+    router.push(qs ? `${pathname}?${qs}` : pathname);
+  };
+
   const toggleParam = (key: string, value: string) => {
     const current = searchParams?.get(key);
     if (current === value) {
@@ -59,61 +73,56 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
     }
   };
 
-  // Predefined price ranges (KSH)
-  const priceRanges = [
-    { label: "Any", min: undefined as string | undefined, max: undefined as string | undefined },
-    { label: "0 - 20k", min: "0", max: "20000" },
-    { label: "20k - 50k", min: "20000", max: "50000" },
-    { label: "50k - 100k", min: "50000", max: "100000" },
-    { label: "100k+", min: "100000", max: undefined },
-  ];
-
-  const isPriceActive = (min?: string, max?: string) => {
-    const curMin = selected.minPrice || undefined;
-    const curMax = selected.maxPrice || undefined;
-    return (curMin ?? undefined) === (min ?? undefined) && (curMax ?? undefined) === (max ?? undefined);
-  };
-
   const applyPrice = (min?: string, max?: string) => {
     if (!min && !max) {
-      setParam("minPrice", undefined);
-      setParam("maxPrice", undefined);
+      setParams({ minPrice: undefined, maxPrice: undefined });
       return;
     }
-    setParam("minPrice", min);
-    setParam("maxPrice", max);
+    setParams({ minPrice: min, maxPrice: max });
   };
 
-  // Compute current price dropdown value string from selected min/max
-  const getPriceValue = () => {
-    const curMin = selected.minPrice || undefined;
-    const curMax = selected.maxPrice || undefined;
-    if (!curMin && !curMax) return "";
-    if (curMin === "0" && curMax === "20000") return "0-20000";
-    if (curMin === "20000" && curMax === "50000") return "20000-50000";
-    if (curMin === "50000" && curMax === "100000") return "50000-100000";
-    if (curMin === "100000" && !curMax) return "100000-";
-    return ""; // fallback to Any if values don't match preset
-  };
+  // Local state for debounced min/max numeric inputs
+  const [minPriceInput, setMinPriceInput] = React.useState<string>(selected.minPrice || "");
+  const [maxPriceInput, setMaxPriceInput] = React.useState<string>(selected.maxPrice || "");
 
-  const onPriceChange = (value: string) => {
-    switch (value) {
-      case "0-20000":
-        applyPrice("0", "20000");
-        break;
-      case "20000-50000":
-        applyPrice("20000", "50000");
-        break;
-      case "50000-100000":
-        applyPrice("50000", "100000");
-        break;
-      case "100000-":
-        applyPrice("100000", undefined);
-        break;
-      default:
-        applyPrice(undefined, undefined);
-    }
-  };
+  // Keep inputs in sync with URL changes
+  React.useEffect(() => {
+    setMinPriceInput(selected.minPrice || "");
+  }, [selected.minPrice]);
+  React.useEffect(() => {
+    setMaxPriceInput(selected.maxPrice || "");
+  }, [selected.maxPrice]);
+
+  // Validation helper message for price
+  const [priceHelp, setPriceHelp] = React.useState<string>("");
+
+  // Debounce URL updates when typing
+  React.useEffect(() => {
+    const handle = setTimeout(() => {
+      const sanitize = (val: string): string | undefined => {
+        const trimmed = val.trim();
+        if (trimmed === "") return undefined;
+        const n = Number(trimmed);
+        if (isNaN(n) || n < 0) return undefined;
+        return String(Math.floor(n));
+      };
+      const min = sanitize(minPriceInput);
+      const max = sanitize(maxPriceInput);
+      if (min && max) {
+        const minN = Number(min);
+        const maxN = Number(max);
+        if (maxN < minN) {
+          // Auto-correct: set max = min and show helper text
+          setParams({ minPrice: String(minN), maxPrice: String(minN) });
+          setPriceHelp("Max adjusted to match Min");
+          return;
+        }
+      }
+      setPriceHelp("");
+      setParams({ minPrice: min, maxPrice: max });
+    }, 400);
+    return () => clearTimeout(handle);
+  }, [minPriceInput, maxPriceInput]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
@@ -202,23 +211,34 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
           </select>
         </div>
 
-        {/* Price - Dropdown */}
+        {/* Price - Min/Max Numeric Inputs */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-price">
-            Price Range (KSH)
-          </label>
-          <select
-            id="filter-price"
-            value={getPriceValue()}
-            onChange={(e) => onPriceChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
-          >
-            <option value="">Any</option>
-            <option value="0-20000">0 - 20k</option>
-            <option value="20000-50000">20k - 50k</option>
-            <option value="50000-100000">50k - 100k</option>
-            <option value="100000-">100k+</option>
-          </select>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Price Range (KSH)</p>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              step={1000}
+              placeholder="Min"
+              value={minPriceInput}
+              onChange={(e) => setMinPriceInput(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600 placeholder:text-gray-400"
+            />
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              step={1000}
+              placeholder="Max"
+              value={maxPriceInput}
+              onChange={(e) => setMaxPriceInput(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600 placeholder:text-gray-400"
+            />
+          </div>
+          {priceHelp && (
+            <p className="text-xs text-amber-600 mt-1">{priceHelp}</p>
+          )}
         </div>
       </div>
     </div>
