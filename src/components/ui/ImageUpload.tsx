@@ -1,7 +1,7 @@
 'use client';
 
 import { CldUploadWidget } from 'next-cloudinary';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface ImageUploadProps {
@@ -30,11 +30,31 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [uploadedImages, setUploadedImages] = useState<string[]>(value);
 
+  // Sync with parent value when it changes (important for edit forms)
+  useEffect(() => {
+    setUploadedImages(value);
+  }, [value]);
+
   const handleUpload = (result: any) => {
-    const newUrl = result.info.secure_url;
-    const updatedImages = [...uploadedImages, newUrl];
-    setUploadedImages(updatedImages);
-    onChange(updatedImages);
+    // Handle both single and batch uploads
+    if (result.info && result.info.secure_url) {
+      const newUrl = result.info.secure_url;
+      const updatedImages = [...uploadedImages, newUrl];
+      setUploadedImages(updatedImages);
+      onChange(updatedImages);
+    }
+  };
+
+  const handleBatchUpload = (results: any) => {
+    // If multiple files are uploaded at once
+    if (Array.isArray(results)) {
+      const newUrls = results
+        .map(r => r.info?.secure_url)
+        .filter(Boolean);
+      const updatedImages = [...uploadedImages, ...newUrls];
+      setUploadedImages(updatedImages);
+      onChange(updatedImages);
+    }
   };
 
   const handleRemove = (urlToRemove: string) => {
@@ -81,15 +101,25 @@ export function ImageUpload({
       {/* Upload Button */}
       {canUploadMore && (
         <CldUploadWidget
-          uploadPreset="pumalo_uploads" // You need to create this in Cloudinary
+          uploadPreset="pumalo_uploads"
           options={{
             folder,
-            maxFiles: maxImages - uploadedImages.length,
+            multiple: true,
+            maxFiles: maxImages,
             resourceType: 'image',
             clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-            maxFileSize: 5000000, // 5MB
+            maxFileSize: 5000000, // 5MB per image
+            sources: ['local', 'url', 'camera'],
+            showSkipCropButton: false,
+            cropping: false,
           }}
           onSuccess={handleUpload}
+          onQueuesEnd={(result: any) => {
+            // This is called when all files in the queue are uploaded
+            if (result.info && Array.isArray(result.info.files)) {
+              handleBatchUpload(result.info.files);
+            }
+          }}
         >
           {({ open }) => (
             <button
@@ -116,6 +146,9 @@ export function ImageUpload({
                 </p>
                 <p className="text-xs text-gray-500">
                   {uploadedImages.length} / {maxImages} images uploaded
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  You can select up to {maxImages - uploadedImages.length} more image{maxImages - uploadedImages.length !== 1 ? 's' : ''} at once
                 </p>
               </div>
             </button>

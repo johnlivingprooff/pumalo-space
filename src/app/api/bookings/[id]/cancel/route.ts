@@ -4,13 +4,13 @@ import { stackServerApp } from '@/stack';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await stackServerApp.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const bookingId = params.id;
+    const { id: bookingId } = await params;
     if (!bookingId) return NextResponse.json({ error: 'Missing booking id' }, { status: 400 });
 
     const booking = await prisma.booking.findUnique({

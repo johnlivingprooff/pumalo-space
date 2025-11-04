@@ -68,16 +68,55 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Import stackServerApp for authentication
+    const { stackServerApp } = await import('@/stack');
+
+    // Verify user is authenticated
+    const user = await stackServerApp.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user is a host
+    const { prisma } = await import('@/lib/prisma');
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { isHost: true },
+    });
+
+    if (!dbUser?.isHost) {
+      return NextResponse.json({ error: 'Only hosts can create listings' }, { status: 403 });
+    }
+
     const body = await request.json();
-    
-    // You would validate the user is authenticated here
-    // const user = await stackServerApp.getUser();
-    // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    
+
+    // Validate required fields
+    const requiredFields = [
+      'title', 'description', 'propertyType', 'address', 'city', 'country',
+      'price', 'images', 'bedrooms', 'bathrooms', 'maxGuests'
+    ];
+
+    for (const field of requiredFields) {
+      if (!body[field]) {
+        return NextResponse.json({ error: `Missing required field: ${field}` }, { status: 400 });
+      }
+    }
+
+    // Validate property type
+    const validTypes = ['RENT', 'BUY', 'LODGE'];
+    if (!validTypes.includes(body.propertyType)) {
+      return NextResponse.json({ error: 'Invalid property type' }, { status: 400 });
+    }
+
     const property = await prisma.property.create({
       data: {
         ...body,
+        hostId: user.id,
         propertyType: body.propertyType.toUpperCase(),
+        // Ensure arrays are properly handled
+        images: body.images || [],
+        amenities: body.amenities || [],
+        availability: body.availability || [],
       },
       include: {
         host: {
@@ -90,7 +129,7 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-    
+
     return NextResponse.json(property, { status: 201 });
   } catch (error) {
     console.error('Error creating property:', error);

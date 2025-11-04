@@ -2,6 +2,8 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { stackServerApp } from '@/stack';
 import { Button } from '@/components/ui/Button';
+import { PropertyCardWrapper } from '@/components/host/PropertyCardWrapper';
+import { EditPropertyLink } from '@/components/host/EditPropertyLink';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
 
@@ -16,6 +18,7 @@ async function getHostProperties(hostId: string) {
     return properties;
   } catch (error) {
     console.error('Error fetching host properties:', error);
+    // Return empty array instead of throwing to prevent page crash
     return [];
   }
 }
@@ -27,10 +30,34 @@ export default async function HostListingsPage() {
   }
 
   // Check if user is a host
-  const dbUser = await prisma.user.findUnique({
-    where: { id: stackUser.id },
-    select: { isHost: true },
-  });
+  let dbUser;
+  try {
+    dbUser = await prisma.user.findUnique({
+      where: { id: stackUser.id },
+      select: { isHost: true },
+    });
+  } catch (error) {
+    console.error('Database connection error:', error);
+    // If database is unavailable, redirect to a maintenance page or show error
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Service Temporarily Unavailable</h1>
+          <p className="text-gray-600 mb-6">
+            We're experiencing technical difficulties. Please try again in a few minutes.
+          </p>
+          <Link href="/">
+            <Button variant="primary">Return to Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!dbUser?.isHost) {
     redirect('/host/onboarding');
@@ -63,10 +90,7 @@ export default async function HostListingsPage() {
         {properties.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map((property) => (
-              <div
-                key={property.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-              >
+              <PropertyCardWrapper key={property.id} propertyId={property.id}>
                 <img
                   src={property.images[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&h=600&fit=crop&q=80'}
                   alt={property.title}
@@ -81,15 +105,10 @@ export default async function HostListingsPage() {
                     <span className="text-lg font-bold text-primary-600">
                       {property.currency} {property.price.toLocaleString()}
                     </span>
-                    <Link
-                      href={`/host/listings/${property.id}/edit`}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-                    >
-                      Edit
-                    </Link>
+                    <EditPropertyLink propertyId={property.id} />
                   </div>
                 </div>
-              </div>
+              </PropertyCardWrapper>
             ))}
           </div>
         ) : (

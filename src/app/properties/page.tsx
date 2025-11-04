@@ -1,3 +1,7 @@
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import React from 'react';
 import { PropertyCard } from '@/components/properties/PropertyCard';
 import prisma from '@/lib/prisma';
@@ -96,9 +100,10 @@ async function getUserFavorites(userId: string) {
 export default async function PropertiesPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const properties = await getProperties(searchParams);
+  const params = await searchParams;
+  const properties = await getProperties(params);
   
   // Get current user and their favorites
   const user = await stackServerApp.getUser();
@@ -117,8 +122,8 @@ export default async function PropertiesPage({
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {searchParams.type
-              ? `Properties for ${searchParams.type.charAt(0).toUpperCase() + searchParams.type.slice(1)}`
+            {params.type
+              ? `Properties for ${params.type.charAt(0).toUpperCase() + params.type.slice(1)}`
               : 'All Properties'
             }
           </h1>
@@ -136,12 +141,12 @@ export default async function PropertiesPage({
               <FiltersBar
                 cities={cities}
                 selected={{
-                  type: searchParams.type,
-                  city: searchParams.city,
-                  minPrice: searchParams.minPrice,
-                  maxPrice: searchParams.maxPrice,
-                  bedrooms: searchParams.bedrooms,
-                  bathrooms: searchParams.bathrooms,
+                  type: params.type,
+                  city: params.city,
+                  minPrice: params.minPrice,
+                  maxPrice: params.maxPrice,
+                  bedrooms: params.bedrooms,
+                  bathrooms: params.bathrooms,
                 }}
               />
             </div>

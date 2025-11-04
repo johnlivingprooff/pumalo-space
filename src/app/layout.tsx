@@ -22,9 +22,9 @@ export const metadata: Metadata = {
   keywords: ["property rental", "buy property", "lodge", "accommodation", "real estate"],
   authors: [{ name: "Pumalo Space" }],
   icons: {
-    icon: "/logo_blue.png",
-    shortcut: "/logo_blue.png",
-    apple: "/logo_blue.png",
+    icon: "/logo_blue.ico",
+    shortcut: "/logo_blue.ico",
+    apple: "/logo_blue.ico",
   },
   openGraph: {
     title: "Pumalo Space - Find Your Perfect Property",
