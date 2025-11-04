@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { label: 'Rent', href: '/rent' },
-  { label: 'Buy', href: '/buy' },
-  { label: 'Lodge', href: '/lodge' },
+  { label: 'Rent', href: '/properties?type=rent' },
+  { label: 'Buy', href: '/properties?type=buy' },
+  { label: 'Lodge', href: '/properties?type=lodge' },
 ];
 
 export const Navigation: React.FC = () => {

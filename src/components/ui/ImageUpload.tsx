@@ -63,6 +63,14 @@ export function ImageUpload({
     onChange(updatedImages);
   };
 
+  const setAsMain = (url: string) => {
+    // Move the selected image to the front (index 0)
+    if (!uploadedImages.includes(url)) return;
+    const reordered = [url, ...uploadedImages.filter((u) => u !== url)];
+    setUploadedImages(reordered);
+    onChange(reordered);
+  };
+
   const canUploadMore = uploadedImages.length < maxImages;
 
   return (
@@ -71,7 +79,21 @@ export function ImageUpload({
       {uploadedImages.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {uploadedImages.map((url, index) => (
-            <div key={url} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
+            <div
+              key={url}
+              className={`relative group aspect-square rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-blue-300' : 'border-gray-200 hover:border-blue-300 cursor-pointer'}`}
+              onClick={() => index !== 0 && setAsMain(url)}
+              role={index !== 0 ? 'button' : undefined}
+              tabIndex={index !== 0 ? 0 : -1}
+              onKeyDown={(e) => {
+                if (index !== 0 && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  setAsMain(url);
+                }
+              }}
+              title={index === 0 ? 'Main image' : 'Click to set as main image'}
+              aria-label={index === 0 ? 'Main image' : 'Click to set as main image'}
+            >
               <Image
                 src={url}
                 alt={`Upload ${index + 1}`}
@@ -80,7 +102,10 @@ export function ImageUpload({
               />
               <button
                 type="button"
-                onClick={() => handleRemove(url)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove(url);
+                }}
                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                 title="Remove image"
               >
@@ -88,6 +113,15 @@ export function ImageUpload({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
+              {index !== 0 && (
+                <>
+                  {/* Hover overlay to hint action */}
+                  <div className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-black/70 text-white text-xs px-2 py-1 rounded shadow">
+                    Click to set as main image
+                  </div>
+                </>
+              )}
               {index === 0 && (
                 <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
                   Main Image
