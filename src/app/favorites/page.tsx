@@ -1,6 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 import { PropertyCard } from '@/components/properties/PropertyCard';
 import { RemoveFavoriteButton } from '@/components/favorites/RemoveFavoriteButton';
 import prisma from '@/lib/prisma';

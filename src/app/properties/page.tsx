@@ -8,7 +8,7 @@ import prisma from '@/lib/prisma';
 import { PropertyType } from '@prisma/client';
 import { FiltersBar } from '@/components/properties/FiltersBar';
 import { FavoriteButton } from '@/components/properties/FavoriteButton';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 
 interface SearchParams {
   type?: string;

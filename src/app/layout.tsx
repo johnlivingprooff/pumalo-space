@@ -5,7 +5,7 @@ import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { StackProvider, StackTheme } from "@stackframe/stack";
-import { stackServerApp } from "@/stack";
+import { stackServerApp } from "@stack/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

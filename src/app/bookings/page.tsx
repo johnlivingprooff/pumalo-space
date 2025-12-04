@@ -1,6 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 import { Badge } from '@/components/ui/Badge';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';

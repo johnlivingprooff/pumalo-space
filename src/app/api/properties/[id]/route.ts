@@ -72,7 +72,7 @@ export async function PUT(
 ) {
   try {
     // Import stackServerApp for authentication
-    const { stackServerApp } = await import('@/stack');
+    const { stackServerApp } = await import('@stack/server');
 
     // Verify user is authenticated
     const user = await stackServerApp.getUser();
@@ -152,7 +152,7 @@ export async function DELETE(
 ) {
   try {
     // Import stackServerApp for authentication
-    const { stackServerApp } = await import('@/stack');
+    const { stackServerApp } = await import('@/../stack/server');
 
     // Verify user is authenticated
     const user = await stackServerApp.getUser();

@@ -5,7 +5,7 @@ import { HeroSection } from '@/components/HeroSection';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
 import { FavoriteButton } from '@/components/properties/FavoriteButton';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 import Image from 'next/image';
 
 async function getFeaturedProperties() {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 import { ensureUserInDatabase } from '@/lib/ensureUser';
 
 export async function POST(request: NextRequest) {

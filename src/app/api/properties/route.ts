@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Import stackServerApp for authentication
-    const { stackServerApp } = await import('@/stack');
+    const { stackServerApp } = await import('@stack/server');
 
     // Verify user is authenticated
     const user = await stackServerApp.getUser();

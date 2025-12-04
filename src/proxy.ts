@@ -20,8 +20,8 @@ const securityHeaders = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.cloudinary.com https://*.neon.tech https://*.stackauth.com",
-    "frame-src 'self' https://js.stripe.com https://*.stackauth.com",
+    "connect-src 'self' https://*.cloudinary.com https://*.neon.tech https://*.stackauth.com https://*.stack-auth.com https://1.1.1.1",
+    "frame-src 'self' https://js.stripe.com https://*.stackauth.com https://*.stack-auth.com",
   ].join('; '),
 };
 
@@ -72,7 +72,7 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Apply security headers to all responses
@@ -114,7 +114,7 @@ export function middleware(request: NextRequest) {
   return response;
 }
 
-// Configure middleware matcher
+// Configure proxy matcher
 export const config = {
   matcher: [
     /*

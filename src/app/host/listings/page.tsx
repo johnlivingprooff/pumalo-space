@@ -1,6 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 import { Button } from '@/components/ui/Button';
 import { PropertyCardWrapper } from '@/components/host/PropertyCardWrapper';
 import { EditPropertyLink } from '@/components/host/EditPropertyLink';

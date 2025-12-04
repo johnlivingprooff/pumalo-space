@@ -1,6 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 import { Button } from '@/components/ui/Button';
 import { DeletePropertyButton } from '@/components/host/DeletePropertyButton';
 import prisma from '@/lib/prisma';

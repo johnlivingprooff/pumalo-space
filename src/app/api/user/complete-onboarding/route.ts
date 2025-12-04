@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@stack/server';
 
 export async function POST(request: NextRequest) {
   try {
