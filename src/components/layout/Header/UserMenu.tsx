@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useUser } from '@stackframe/stack';
 import { Button } from '@/components/ui/Button';
@@ -12,15 +12,47 @@ export const UserMenu: React.FC = () => {
   const [imageError, setImageError] = useState(false);
   const [isHost, setIsHost] = useState(false);
 
-  // Fetch user's host status
+  // Memoize user avatar URL to prevent recalculation
+  const avatarUrl = useMemo(() => {
+    if (imageError || !user?.profileImageUrl) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.displayName || 'User')}&background=3B82F6&color=fff`;
+    }
+    return user.profileImageUrl;
+  }, [user?.profileImageUrl, user?.displayName, imageError]);
+
+  // Fetch user's host status with caching
   useEffect(() => {
     if (user?.id) {
+      // Check if we already have the status in session storage
+      const cachedStatus = sessionStorage.getItem(`host-status-${user.id}`);
+      if (cachedStatus !== null) {
+        setIsHost(cachedStatus === 'true');
+        return;
+      }
+
       fetch(`/api/user/host-status?userId=${user.id}`)
         .then((res) => res.json())
-        .then((data) => setIsHost(data.isHost || false))
+        .then((data) => {
+          const hostStatus = data.isHost || false;
+          setIsHost(hostStatus);
+          sessionStorage.setItem(`host-status-${user.id}`, String(hostStatus));
+        })
         .catch(() => setIsHost(false));
     }
   }, [user?.id]);
+
+  // Memoize toggle function
+  const toggleDropdown = useCallback(() => {
+    setIsDropdownOpen(prev => !prev);
+  }, []);
+
+  // Memoize sign out handler
+  const handleSignOut = useCallback(async () => {
+    if (user) {
+      await user.signOut();
+      sessionStorage.clear(); // Clear cached data
+    }
+  }, [user]);
   
   if (!user) {
     return (
@@ -39,33 +71,20 @@ export const UserMenu: React.FC = () => {
     );
   }
   
-  // Check for profile image from various sources
-  const profileImageUrl = user.profileImageUrl || user.clientMetadata?.profileImageUrl;
-  const shouldShowImage = profileImageUrl && !imageError;
-  
   return (
     <div className="relative">
       <button
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        onClick={toggleDropdown}
         className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
       >
-        {shouldShowImage ? (
-          <img 
-            src={profileImageUrl} 
-            alt={user.displayName || 'User'} 
-            className="w-8 h-8 rounded-full object-cover"
-            onError={() => {
-              console.error('Failed to load profile image:', profileImageUrl);
-              setImageError(true);
-            }}
-            referrerPolicy="no-referrer"
-            crossOrigin="anonymous"
-          />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white font-medium">
-            {user.displayName?.charAt(0).toUpperCase() || user.primaryEmail?.charAt(0).toUpperCase() || 'U'}
-          </div>
-        )}
+        <img 
+          src={avatarUrl}
+          alt={user.displayName || 'User'} 
+          className="w-8 h-8 rounded-full object-cover"
+          onError={() => setImageError(true)}
+          referrerPolicy="no-referrer"
+          crossOrigin="anonymous"
+        />
         <svg
           className={`w-4 h-4 text-gray-600 transition-transform ${
             isDropdownOpen ? 'rotate-180' : ''
@@ -120,10 +139,7 @@ export const UserMenu: React.FC = () => {
           <div className="border-t border-gray-200 my-2" />
           
           <button
-            onClick={async () => {
-              await user.signOut();
-              setIsDropdownOpen(false);
-            }}
+            onClick={handleSignOut}
             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
           >
             Log Out

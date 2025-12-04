@@ -44,6 +44,8 @@ model User {
   favorites     Favorite[]
   hostProfile   HostProfile?
   
+  @@index([email])
+  @@index([isHost])
   @@map("users")
 }
 
@@ -100,6 +102,11 @@ model Property {
   @@index([city])
   @@index([hostId])
   @@index([featured])
+  @@index([price])
+  @@index([rating])
+  @@index([createdAt])
+  @@index([propertyType, city])
+  @@index([featured, rating])
   @@map("properties")
 }
 
@@ -128,6 +135,10 @@ model Booking {
   @@index([propertyId])
   @@index([userId])
   @@index([status])
+  @@index([checkIn])
+  @@index([checkOut])
+  @@index([userId, status])
+  @@index([propertyId, checkIn, checkOut])
   @@map("bookings")
 }
 
@@ -149,6 +160,8 @@ model Review {
   
   @@index([propertyId])
   @@index([userId])
+  @@index([rating])
+  @@index([propertyId, createdAt])
   @@map("reviews")
 }
 

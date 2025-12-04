@@ -90,43 +90,35 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Validate required fields
-    const requiredFields = [
-      'title', 'description', 'propertyType', 'address', 'city', 'country',
-      'price', 'images', 'bedrooms', 'bathrooms', 'maxGuests'
-    ];
-
-    for (const field of requiredFields) {
-      if (!body[field]) {
-        return NextResponse.json({ error: `Missing required field: ${field}` }, { status: 400 });
-      }
+    // Import and use validation
+    const { validatePropertyData, sanitizeString } = await import('@/lib/validation');
+    const validation = validatePropertyData(body);
+    
+    if (!validation.valid) {
+      return NextResponse.json({ 
+        error: 'Validation failed', 
+        details: validation.errors 
+      }, { status: 400 });
     }
 
-    // Validate property type
-    const validTypes = ['RENT', 'BUY', 'LODGE'];
-    if (!validTypes.includes(body.propertyType)) {
-      return NextResponse.json({ error: 'Invalid property type' }, { status: 400 });
-    }
+    // Sanitize text fields
+    const sanitizedData = {
+      ...body,
+      title: sanitizeString(body.title, 200),
+      description: sanitizeString(body.description, 5000),
+      address: sanitizeString(body.address, 200),
+      city: sanitizeString(body.city, 100),
+      state: body.state ? sanitizeString(body.state, 100) : null,
+      country: sanitizeString(body.country, 100),
+      zipCode: body.zipCode ? sanitizeString(body.zipCode, 20) : null,
+      pricePeriod: body.pricePeriod ? sanitizeString(body.pricePeriod, 20) : null,
+    };
 
+    // Create the property
     const property = await prisma.property.create({
       data: {
-        ...body,
+        ...sanitizedData,
         hostId: user.id,
-        propertyType: body.propertyType.toUpperCase(),
-        // Ensure arrays are properly handled
-        images: body.images || [],
-        amenities: body.amenities || [],
-        availability: body.availability || [],
-      },
-      include: {
-        host: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-            verified: true,
-          },
-        },
       },
     });
 
