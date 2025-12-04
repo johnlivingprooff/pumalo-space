@@ -108,6 +108,17 @@ export const Footer: React.FC = () => {
             © {new Date().getFullYear()} Pumalo Space. All rights reserved.
           </div>
           
+          {/* Cookie Settings Link */}
+          <button
+            onClick={() => {
+              const event = new CustomEvent('open-cookie-settings');
+              window.dispatchEvent(event);
+            }}
+            className="text-sm text-gray-600 hover:text-primary-600 transition-colors"
+          >
+            Cookie Settings
+          </button>
+          
           {/* Social Links */}
           <div className="flex items-center gap-6">
             {socialLinks.map((social) => (
