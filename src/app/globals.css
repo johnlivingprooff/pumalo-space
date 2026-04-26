@@ -1,5 +1,39 @@
 @import "tailwindcss";
 
+/* Hide turbopack loading indicator */
+@keyframes __turbopack_load__ {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Completely hide the development loading indicator */
+body > div[id*="turbopack"],
+body > div[class*="turbopack"],
+body > div[data-turbopack],
+div[role="progressbar"],
+.next-dev-turbopack-indicator,
+[class*="turbopack-indicator"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Custom skeleton pulse animation */
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #1F2937;

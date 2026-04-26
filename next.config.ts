@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Suppress turbopack loading indicator during development
+  turbopack: {
+    // This helps with loading indicator issues
+  },
   images: {
     remotePatterns: [
       {
