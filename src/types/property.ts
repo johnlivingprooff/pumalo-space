@@ -1,39 +1,25 @@
 export type PropertyType = 'rent' | 'buy' | 'lodge';
 
-export interface Location {
-  address: string;
-  city: string;
-  state?: string;
-  country: string;
-  zipCode?: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-}
-
-export interface Price {
-  amount: number;
-  currency: string;
-  period?: 'night' | 'week' | 'month' | 'total';
-}
-
-export interface Rooms {
-  bedrooms: number;
-  bathrooms: number;
-  maxGuests: number;
-}
-
 export interface Property {
   id: string;
   title: string;
   description: string;
   propertyType: PropertyType;
-  location: Location;
-  price: Price;
+  address: string;
+  city: string;
+  state?: string;
+  country: string;
+  zipCode?: string;
+  latitude: number;
+  longitude: number;
+  price: number;
+  currency: string;
+  pricePeriod?: string | null;
   images: string[];
   amenities: string[];
-  rooms: Rooms;
+  bedrooms: number;
+  bathrooms: number;
+  maxGuests: number;
   hostId: string;
   rating: number;
   reviewCount: number;
@@ -54,7 +40,7 @@ export interface PropertyCardProps {
   rating: number;
   reviewCount: number;
   propertyType: PropertyType;
-    favoriteButton?: React.ReactNode;
+  initialIsFavorite?: boolean;
 }
 
 export interface PropertyFilters {

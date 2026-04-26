@@ -7,7 +7,6 @@ import { PropertyCard } from '@/components/properties/PropertyCard';
 import prisma from '@/lib/prisma';
 import { PropertyType } from '@prisma/client';
 import { FiltersBar } from '@/components/properties/FiltersBar';
-import { FavoriteButton } from '@/components/properties/FavoriteButton';
 import { stackServerApp } from '@stack/server';
 
 interface SearchParams {
@@ -169,12 +168,7 @@ export default async function PropertiesPage({
                     rating={property.rating}
                     reviewCount={property.reviewCount}
                     propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
-                     favoriteButton={
-                       <FavoriteButton
-                         propertyId={property.id}
-                         initialIsFavorite={favoriteIds.has(property.id)}
-                       />
-                     }
+                    initialIsFavorite={favoriteIds.has(property.id)}
                   />
                 ))}
               </div>

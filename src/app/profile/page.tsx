@@ -1,5 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
+import Image from 'next/image';
 import { stackServerApp } from '@stack/server';
 import { Button } from '@/components/ui/Button';
 import prisma from '@/lib/prisma';
@@ -95,19 +96,27 @@ export default async function ProfilePage() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
           <div className="flex items-start gap-6">
             {/* Avatar */}
-            <div className="flex-shrink-0">
-              {user.avatar || stackUser.profileImageUrl ? (
-                <img
-                  src={user.avatar || stackUser.profileImageUrl || ''}
-                  alt={user.name}
-                  className="w-24 h-24 rounded-full object-cover border-4 border-primary-100"
-                />
-              ) : (
-                <div className="w-24 h-24 rounded-full bg-primary-600 flex items-center justify-center text-white text-3xl font-bold border-4 border-primary-100">
-                  {user.name.charAt(0).toUpperCase()}
+                <div className="flex-shrink-0">
+                  {user.avatar || stackUser.profileImageUrl ? (
+                    <Image
+                      src={user.avatar || stackUser.profileImageUrl || ''}
+                      alt={user.name}
+                      width={96}
+                      height={96}
+                      className="w-24 h-24 rounded-full object-cover border-4 border-primary-100"
+                      unoptimized
+                    />
+                  ) : (
+                    <Image
+                      src="/user.svg"
+                      alt="User Avatar"
+                      width={96}
+                      height={96}
+                      className="w-24 h-24 rounded-full object-cover border-4 border-primary-100"
+                      unoptimized
+                    />
+                  )}
                 </div>
-              )}
-            </div>
 
             {/* Info */}
             <div className="flex-1">

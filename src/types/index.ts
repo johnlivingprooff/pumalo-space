@@ -1,9 +1,6 @@
 export type { 
   Property, 
   PropertyType, 
-  Location, 
-  Price, 
-  Rooms,
   PropertyCardProps,
   PropertyFilters 
 } from './property';

@@ -1,24 +1,48 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { useUser } from '@stackframe/stack';
 import { Button } from '@/components/ui/Button';
-import Image from 'next/image';
 
 export const UserMenu: React.FC = () => {
   const user = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isHost, setIsHost] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside or pressing Escape
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isDropdownOpen]);
 
   // Memoize user avatar URL to prevent recalculation
   const avatarUrl = useMemo(() => {
     if (imageError || !user?.profileImageUrl) {
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.displayName || 'User')}&background=3B82F6&color=fff`;
+      return `/user.svg`;
     }
     return user.profileImageUrl;
-  }, [user?.profileImageUrl, user?.displayName, imageError]);
+  }, [user?.profileImageUrl, imageError]);
 
   // Fetch user's host status with caching
   useEffect(() => {
@@ -72,7 +96,7 @@ export const UserMenu: React.FC = () => {
   }
   
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
         className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"

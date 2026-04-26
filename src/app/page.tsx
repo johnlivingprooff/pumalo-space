@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/Button';
 import { HeroSection } from '@/components/HeroSection';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
-import { FavoriteButton } from '@/components/properties/FavoriteButton';
 import { stackServerApp } from '@stack/server';
 import Image from 'next/image';
 
@@ -91,12 +90,7 @@ export default async function HomePage() {
                     rating={property.rating}
                     reviewCount={property.reviewCount}
                     propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
-                    favoriteButton={
-                      <FavoriteButton
-                        propertyId={property.id}
-                        initialIsFavorite={favoriteIds.has(property.id)}
-                      />
-                    }
+                    initialIsFavorite={favoriteIds.has(property.id)}
                   />
                 ))}
               </div>

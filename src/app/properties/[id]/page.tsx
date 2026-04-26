@@ -1,11 +1,17 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import prisma from '@/lib/prisma';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 
 async function getProperty(id: string) {
+  // Validate that id is provided and not empty
+  if (!id || typeof id !== 'string') {
+    return null;
+  }
+  
   try {
     const property = await prisma.property.findUnique({
       where: { id },
@@ -46,9 +52,10 @@ async function getProperty(id: string) {
 export default async function PropertyDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const property = await getProperty(params.id);
+  const resolvedParams = await params;
+  const property = await getProperty(resolvedParams.id);
   
   if (!property) {
     notFound();
@@ -205,9 +212,16 @@ export default async function PropertyDetailPage({
                   {property.reviews.map((review) => (
                     <div key={review.id} className="border-b border-gray-200 pb-6 last:border-0">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold flex-shrink-0">
-                          {review.user.name.charAt(0).toUpperCase()}
-                        </div>
+<div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold flex-shrink-0 overflow-hidden">
+                            <Image 
+                              src={review.user.avatar || '/user.svg'} 
+                              alt={review.user.name}
+                              width={48}
+                              height={48}
+                              className="w-full h-full rounded-full object-cover"
+                              unoptimized
+                            />
+                          </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
                             <h3 className="font-semibold text-gray-900">{review.user.name}</h3>
@@ -258,9 +272,16 @@ export default async function PropertyDetailPage({
               <div className="mb-6 pb-6 border-b border-gray-200">
                 <h3 className="text-sm font-medium text-gray-700 mb-3">Hosted by</h3>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold">
-                    {property.host.name.charAt(0).toUpperCase()}
-                  </div>
+<div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold overflow-hidden">
+                          <Image 
+                            src={property.host.avatar || '/user.svg'} 
+                            alt={property.host.name}
+                            width={48}
+                            height={48}
+                            className="w-full h-full rounded-full object-cover"
+                            unoptimized
+                          />
+                        </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="font-semibold text-gray-900">{property.host.name}</p>

@@ -1,9 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { PropertyCardProps } from '@/types';
 import { Badge } from '@/components/ui/Badge';
+import { FavoriteButton } from '@/components/properties/FavoriteButton';
+
+const fallbackImage = 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80';
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({
   id,
@@ -16,25 +20,26 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   rating,
   reviewCount,
   propertyType,
-  favoriteButton,
+  initialIsFavorite = false,
 }) => {
-  const [imageError, setImageError] = useState(false);
-  
   return (
     <Link href={`/properties/${id}`}>
       <div className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer">
         {/* Image Container */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-200">
-          <img
-            src={imageError ? 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80' : image}
+          <Image
+            src={image || fallbackImage}
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={() => setImageError(true)}
-            loading="lazy"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
           
-          {/* Favorite Button Slot */}
-          {favoriteButton}
+          {/* Favorite Button */}
+          <FavoriteButton 
+            propertyId={id} 
+            initialIsFavorite={initialIsFavorite} 
+          />
           
           {/* Property Type Badge */}
           <div className="absolute top-3 left-3">
