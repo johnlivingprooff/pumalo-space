@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 export default function NotFound() {
   return (
@@ -20,14 +20,15 @@ export default function NotFound() {
             />
           </svg>
         </div>
-        
+
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Property Not Found
         </h1>
         <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
-          Sorry, we couldn't find the property you're looking for. It may have been removed or is no longer available.
+          Sorry, we couldn't find the property you're looking for. It may have
+          been removed or is no longer available.
         </p>
-        
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/properties">
             <Button variant="primary" size="lg">

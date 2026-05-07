@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function CancelBookingButton({ bookingId }: { bookingId: string }) {
   const [loading, setLoading] = useState(false);
@@ -12,12 +12,14 @@ export function CancelBookingButton({ bookingId }: { bookingId: string }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/bookings/${bookingId}/cancel`, { method: 'POST' });
+      const res = await fetch(`/api/bookings/${bookingId}/cancel`, {
+        method: "POST",
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to cancel');
+      if (!res.ok) throw new Error(data.error || "Failed to cancel");
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to cancel');
+      setError(e instanceof Error ? e.message : "Failed to cancel");
     } finally {
       setLoading(false);
     }
@@ -30,7 +32,7 @@ export function CancelBookingButton({ bookingId }: { bookingId: string }) {
         disabled={loading}
         className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-60"
       >
-        {loading ? 'Cancelling…' : 'Cancel Booking'}
+        {loading ? "Cancelling…" : "Cancel Booking"}
       </button>
       {error && <span className="text-xs text-red-600">{error}</span>}
     </div>

@@ -1,9 +1,24 @@
 @import "tailwindcss";
 
+/* Stack Auth component text visibility — ensure all text inside the white auth card is dark */
+.rounded-2xl.bg-white p,
+.rounded-2xl.bg-white span,
+.rounded-2xl.bg-white h1,
+.rounded-2xl.bg-white h2,
+.rounded-2xl.bg-white h3,
+.rounded-2xl.bg-white label,
+.rounded-2xl.bg-white a:not([class*="text-"]) {
+  color: #111827;
+}
+
 /* Hide turbopack loading indicator */
 @keyframes __turbopack_load__ {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Completely hide the development loading indicator */
@@ -20,7 +35,8 @@ div[role="progressbar"],
 
 /* Custom skeleton pulse animation */
 @keyframes skeleton-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -36,28 +52,28 @@ div[role="progressbar"],
 
 :root {
   --background: #ffffff;
-  --foreground: #1F2937;
-  
+  --foreground: #1f2937;
+
   /* Primary Blue Theme */
-  --primary-50: #E6F2FF;
-  --primary-100: #CCE5FF;
-  --primary-200: #99CBFF;
-  --primary-300: #66B0FF;
-  --primary-400: #3396FF;
-  --primary-500: #0066CC;
-  --primary-600: #0052A3;
-  --primary-700: #003D7A;
+  --primary-50: #e6f2ff;
+  --primary-100: #cce5ff;
+  --primary-200: #99cbff;
+  --primary-300: #66b0ff;
+  --primary-400: #3396ff;
+  --primary-500: #0066cc;
+  --primary-600: #0052a3;
+  --primary-700: #003d7a;
   --primary-800: #002952;
   --primary-900: #001429;
-  
+
   /* Accent Blue */
-  --accent-500: #00A3FF;
-  
+  --accent-500: #00a3ff;
+
   /* Semantic Colors */
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
 }
 
 @theme inline {
@@ -65,7 +81,7 @@ div[role="progressbar"],
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  
+
   /* Primary Colors */
   --color-primary-50: var(--primary-50);
   --color-primary-100: var(--primary-100);
@@ -77,10 +93,10 @@ div[role="progressbar"],
   --color-primary-700: var(--primary-700);
   --color-primary-800: var(--primary-800);
   --color-primary-900: var(--primary-900);
-  
+
   /* Accent */
   --color-accent-500: var(--accent-500);
-  
+
   /* Semantic */
   --color-success: var(--success);
   --color-warning: var(--warning);
@@ -91,7 +107,7 @@ div[role="progressbar"],
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #F3F4F6;
+    --foreground: #f3f4f6;
   }
 }
 
@@ -114,16 +130,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F3F4F6;
+  background: #f3f4f6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #9CA3AF;
+  background: #9ca3af;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6B7280;
+  background: #6b7280;
 }
 
 /* Custom animations */
@@ -205,13 +221,13 @@ body {
 [data-stack-auth] textarea,
 [data-stack-auth] select {
   background-color: #ffffff !important;
-  color: #4B5563 !important; /* gray-600 - light gray text */
-  border-color: #D1D5DB !important; /* gray-300 */
+  color: #4b5563 !important; /* gray-600 - light gray text */
+  border-color: #d1d5db !important; /* gray-300 */
 }
 
 [data-stack-auth] input::placeholder,
 [data-stack-auth] textarea::placeholder {
-  color: #9CA3AF !important; /* gray-400 - light gray placeholder */
+  color: #9ca3af !important; /* gray-400 - light gray placeholder */
 }
 
 /* Focus state */
@@ -219,8 +235,8 @@ body {
 [data-stack-auth] textarea:focus,
 [data-stack-auth] select:focus {
   background-color: #ffffff !important;
-  color: #4B5563 !important;
-  border-color: #0066CC !important; /* primary-500 */
+  color: #4b5563 !important;
+  border-color: #0066cc !important; /* primary-500 */
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1) !important;
 }
@@ -235,21 +251,21 @@ body {
 .stack-scope textarea,
 .stack-scope select {
   background-color: #ffffff !important;
-  color: #4B5563 !important;
-  border-color: #D1D5DB !important;
+  color: #4b5563 !important;
+  border-color: #d1d5db !important;
 }
 
 .stack-scope input::placeholder,
 .stack-scope textarea::placeholder {
-  color: #9CA3AF !important;
+  color: #9ca3af !important;
 }
 
 .stack-scope input:focus,
 .stack-scope textarea:focus,
 .stack-scope select:focus {
   background-color: #ffffff !important;
-  color: #4B5563 !important;
-  border-color: #0066CC !important;
+  color: #4b5563 !important;
+  border-color: #0066cc !important;
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1) !important;
 }
@@ -259,7 +275,7 @@ body {
 [data-stack-auth] button.primary,
 .stack-scope button[type="submit"],
 .stack-scope button.primary {
-  background-color: #0066CC !important; /* primary-500 */
+  background-color: #0066cc !important; /* primary-500 */
   color: #ffffff !important;
   border: none !important;
   font-weight: 600 !important;
@@ -270,21 +286,21 @@ body {
 [data-stack-auth] button.primary:hover,
 .stack-scope button[type="submit"]:hover,
 .stack-scope button.primary:hover {
-  background-color: #0052A3 !important; /* primary-600 */
+  background-color: #0052a3 !important; /* primary-600 */
 }
 
 [data-stack-auth] button[type="submit"]:active,
 [data-stack-auth] button.primary:active,
 .stack-scope button[type="submit"]:active,
 .stack-scope button.primary:active {
-  background-color: #003D7A !important; /* primary-700 */
+  background-color: #003d7a !important; /* primary-700 */
 }
 
 [data-stack-auth] button[type="submit"]:disabled,
 [data-stack-auth] button.primary:disabled,
 .stack-scope button[type="submit"]:disabled,
 .stack-scope button.primary:disabled {
-  background-color: #9CA3AF !important; /* gray-400 */
+  background-color: #9ca3af !important; /* gray-400 */
   cursor: not-allowed !important;
   opacity: 0.6 !important;
 }

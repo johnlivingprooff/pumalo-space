@@ -7,7 +7,7 @@ export default function Loading() {
           <div className="h-4 w-64 bg-gray-200 rounded animate-pulse" />
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Gallery Skeleton */}
@@ -18,7 +18,7 @@ export default function Loading() {
           <div className="hidden md:block h-[290px] bg-gray-200 rounded-xl animate-pulse" />
           <div className="hidden md:block h-[290px] bg-gray-200 rounded-xl animate-pulse" />
         </div>
-        
+
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content Skeleton */}
@@ -27,11 +27,11 @@ export default function Loading() {
               <div className="h-10 w-3/4 bg-gray-200 rounded animate-pulse" />
               <div className="h-6 w-1/2 bg-gray-200 rounded animate-pulse" />
             </div>
-            
+
             <div className="h-32 bg-gray-200 rounded animate-pulse" />
             <div className="h-64 bg-gray-200 rounded animate-pulse" />
           </div>
-          
+
           {/* Sidebar Skeleton */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">

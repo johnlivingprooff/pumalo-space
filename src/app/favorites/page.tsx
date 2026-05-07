@@ -1,10 +1,10 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
-import { stackServerApp } from '@stack/server';
-import { PropertyCard } from '@/components/properties/PropertyCard';
-import { RemoveFavoriteButton } from '@/components/favorites/RemoveFavoriteButton';
-import prisma from '@/lib/prisma';
-import { ensureUserInDatabase } from '@/lib/ensureUser';
+import React from "react";
+import { redirect } from "next/navigation";
+import { stackServerApp } from "@stack/server";
+import { PropertyCard } from "@/components/properties/PropertyCard";
+import { RemoveFavoriteButton } from "@/components/favorites/RemoveFavoriteButton";
+import prisma from "@/lib/prisma";
+import { ensureUserInDatabase } from "@/lib/ensureUser";
 
 async function getUserFavorites(userId: string) {
   try {
@@ -25,12 +25,12 @@ async function getUserFavorites(userId: string) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
     return favorites;
   } catch (error) {
-    console.error('Error fetching favorites:', error);
+    console.error("Error fetching favorites:", error);
     return [];
   }
 }
@@ -38,7 +38,7 @@ async function getUserFavorites(userId: string) {
 export default async function FavoritesPage() {
   const stackUser = await stackServerApp.getUser();
   if (!stackUser) {
-    redirect('/sign-in');
+    redirect("/sign-in");
   }
 
   // Auto-sync: Ensure user exists in database
@@ -58,7 +58,8 @@ export default async function FavoritesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">My Favorites</h1>
           <p className="mt-2 text-gray-600">
-            {favorites.length} {favorites.length === 1 ? 'property' : 'properties'} saved
+            {favorites.length}{" "}
+            {favorites.length === 1 ? "property" : "properties"} saved
           </p>
         </div>
       </div>
@@ -78,10 +79,18 @@ export default async function FavoritesPage() {
                   price={property.price}
                   currency={property.currency}
                   pricePerPeriod={property.pricePeriod || undefined}
-                  image={property.images[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80'}
+                  image={
+                    property.images[0] ||
+                    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80"
+                  }
                   rating={property.rating}
                   reviewCount={property.reviewCount}
-                  propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
+                  propertyType={
+                    property.propertyType.toLowerCase() as
+                      | "rent"
+                      | "buy"
+                      | "lodge"
+                  }
                 />
               </div>
             ))}
@@ -103,7 +112,9 @@ export default async function FavoritesPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No favorites yet</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No favorites yet
+            </h3>
             <p className="text-gray-600 mb-6">
               Start exploring and save your favorite properties for later
             </p>

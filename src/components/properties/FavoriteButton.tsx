@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@stackframe/stack';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@stackframe/stack";
 
 interface FavoriteButtonProps {
   propertyId: string;
   initialIsFavorite?: boolean;
 }
 
-export function FavoriteButton({ propertyId, initialIsFavorite = false }: FavoriteButtonProps) {
+export function FavoriteButton({
+  propertyId,
+  initialIsFavorite = false,
+}: FavoriteButtonProps) {
   const router = useRouter();
   const user = useUser();
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
@@ -21,7 +24,7 @@ export function FavoriteButton({ propertyId, initialIsFavorite = false }: Favori
 
     // Redirect to sign-in if not authenticated
     if (!user) {
-      router.push('/sign-in');
+      router.push("/sign-in");
       return;
     }
 
@@ -30,19 +33,22 @@ export function FavoriteButton({ propertyId, initialIsFavorite = false }: Favori
     try {
       if (isFavorite) {
         // Remove from favorites
-        const response = await fetch(`/api/favorites?propertyId=${propertyId}`, {
-          method: 'DELETE',
-        });
+        const response = await fetch(
+          `/api/favorites?propertyId=${propertyId}`,
+          {
+            method: "DELETE",
+          },
+        );
 
         if (response.ok) {
           setIsFavorite(false);
         }
       } else {
         // Add to favorites
-        const response = await fetch('/api/favorites', {
-          method: 'POST',
+        const response = await fetch("/api/favorites", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ propertyId }),
         });
@@ -52,7 +58,7 @@ export function FavoriteButton({ propertyId, initialIsFavorite = false }: Favori
         }
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      console.error("Error toggling favorite:", error);
     } finally {
       setIsLoading(false);
     }
@@ -63,11 +69,13 @@ export function FavoriteButton({ propertyId, initialIsFavorite = false }: Favori
       onClick={handleToggleFavorite}
       disabled={isLoading}
       className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors z-10 disabled:opacity-50"
-      aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
     >
       <svg
         className={`w-5 h-5 transition-colors ${
-          isFavorite ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-gray-700'
+          isFavorite
+            ? "fill-red-500 stroke-red-500"
+            : "fill-none stroke-gray-700"
         }`}
         viewBox="0 0 24 24"
         strokeWidth={2}

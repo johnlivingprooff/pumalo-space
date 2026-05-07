@@ -1,11 +1,11 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
-import { stackServerApp } from '@stack/server';
-import { Badge } from '@/components/ui/Badge';
-import prisma from '@/lib/prisma';
-import Link from 'next/link';
-import { CancelBookingButton } from '@/components/bookings/CancelBookingButton';
-import { ensureUserInDatabase } from '@/lib/ensureUser';
+import React from "react";
+import { redirect } from "next/navigation";
+import { stackServerApp } from "@stack/server";
+import { Badge } from "@/components/ui/Badge";
+import prisma from "@/lib/prisma";
+import Link from "next/link";
+import { CancelBookingButton } from "@/components/bookings/CancelBookingButton";
+import { ensureUserInDatabase } from "@/lib/ensureUser";
 
 async function getUserBookings(userId: string) {
   try {
@@ -26,36 +26,36 @@ async function getUserBookings(userId: string) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
     return bookings;
   } catch (error) {
-    console.error('Error fetching bookings:', error);
+    console.error("Error fetching bookings:", error);
     return [];
   }
 }
 
 function getStatusColor(status: string) {
   switch (status) {
-    case 'CONFIRMED':
-      return 'success';
-    case 'PENDING':
-      return 'warning';
-    case 'CANCELLED':
-      return 'error';
-    case 'COMPLETED':
-      return 'default';
+    case "CONFIRMED":
+      return "success";
+    case "PENDING":
+      return "warning";
+    case "CANCELLED":
+      return "error";
+    case "COMPLETED":
+      return "default";
     default:
-      return 'default';
+      return "default";
   }
 }
 
 function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 }
 
@@ -67,7 +67,7 @@ function calculateNights(checkIn: Date, checkOut: Date) {
 export default async function BookingsPage() {
   const stackUser = await stackServerApp.getUser();
   if (!stackUser) {
-    redirect('/sign-in');
+    redirect("/sign-in");
   }
 
   // Auto-sync: Ensure user exists in database
@@ -87,7 +87,8 @@ export default async function BookingsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
           <p className="mt-2 text-gray-600">
-            {bookings.length} {bookings.length === 1 ? 'booking' : 'bookings'} found
+            {bookings.length} {bookings.length === 1 ? "booking" : "bookings"}{" "}
+            found
           </p>
         </div>
       </div>
@@ -110,7 +111,10 @@ export default async function BookingsPage() {
                         className="flex-shrink-0"
                       >
                         <img
-                          src={booking.property.images[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&h=600&fit=crop&q=80'}
+                          src={
+                            booking.property.images[0] ||
+                            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&h=600&fit=crop&q=80"
+                          }
                           alt={booking.property.title}
                           className="w-full lg:w-48 h-48 object-cover rounded-lg"
                         />
@@ -127,10 +131,13 @@ export default async function BookingsPage() {
                               {booking.property.title}
                             </Link>
                             <p className="text-sm text-gray-600 mt-1">
-                              {booking.property.city}, {booking.property.country}
+                              {booking.property.city},{" "}
+                              {booking.property.country}
                             </p>
                           </div>
-                          <Badge variant={getStatusColor(booking.status) as any}>
+                          <Badge
+                            variant={getStatusColor(booking.status) as any}
+                          >
                             {booking.status}
                           </Badge>
                         </div>
@@ -157,7 +164,7 @@ export default async function BookingsPage() {
                               Duration
                             </p>
                             <p className="text-sm font-medium text-gray-900">
-                              {nights} {nights === 1 ? 'night' : 'nights'}
+                              {nights} {nights === 1 ? "night" : "nights"}
                             </p>
                           </div>
                           <div>
@@ -165,7 +172,8 @@ export default async function BookingsPage() {
                               Guests
                             </p>
                             <p className="text-sm font-medium text-gray-900">
-                              {booking.guests} {booking.guests === 1 ? 'guest' : 'guests'}
+                              {booking.guests}{" "}
+                              {booking.guests === 1 ? "guest" : "guests"}
                             </p>
                           </div>
                         </div>
@@ -175,7 +183,9 @@ export default async function BookingsPage() {
                             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
                               Special Requests
                             </p>
-                            <p className="text-sm text-gray-700">{booking.specialRequests}</p>
+                            <p className="text-sm text-gray-700">
+                              {booking.specialRequests}
+                            </p>
                           </div>
                         )}
 
@@ -185,7 +195,8 @@ export default async function BookingsPage() {
                               Total Price
                             </p>
                             <p className="text-2xl font-bold text-gray-900">
-                              {booking.currency} {booking.totalPrice.toLocaleString()}
+                              {booking.currency}{" "}
+                              {booking.totalPrice.toLocaleString()}
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -195,7 +206,7 @@ export default async function BookingsPage() {
                             >
                               View Property
                             </Link>
-                            {booking.status === 'PENDING' && (
+                            {booking.status === "PENDING" && (
                               <CancelBookingButton bookingId={booking.id} />
                             )}
                           </div>
@@ -224,7 +235,9 @@ export default async function BookingsPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No bookings yet</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No bookings yet
+            </h3>
             <p className="text-gray-600 mb-6">
               Start planning your next adventure by booking a property
             </p>

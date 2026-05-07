@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface CookieSettings {
   essential: boolean;
@@ -21,7 +21,7 @@ export function useCookieConsent() {
 
   useEffect(() => {
     // Load saved preferences
-    const saved = localStorage.getItem('cookie-preferences');
+    const saved = localStorage.getItem("cookie-preferences");
     if (saved) {
       setSettings(JSON.parse(saved));
     }
@@ -31,9 +31,15 @@ export function useCookieConsent() {
       setSettings(event.detail);
     };
 
-    window.addEventListener('cookie-consent-updated', handleUpdate as EventListener);
+    window.addEventListener(
+      "cookie-consent-updated",
+      handleUpdate as EventListener,
+    );
     return () => {
-      window.removeEventListener('cookie-consent-updated', handleUpdate as EventListener);
+      window.removeEventListener(
+        "cookie-consent-updated",
+        handleUpdate as EventListener,
+      );
     };
   }, []);
 
@@ -54,7 +60,7 @@ export function GoogleAnalyticsLoader() {
 
   useEffect(() => {
     // Check current settings
-    const saved = localStorage.getItem('cookie-preferences');
+    const saved = localStorage.getItem("cookie-preferences");
     if (saved) {
       const prefs = JSON.parse(saved);
       setAnalyticsAllowed(prefs.analytics);
@@ -65,9 +71,15 @@ export function GoogleAnalyticsLoader() {
       setAnalyticsAllowed(event.detail.analytics);
     };
 
-    window.addEventListener('cookie-consent-updated', handleUpdate as EventListener);
+    window.addEventListener(
+      "cookie-consent-updated",
+      handleUpdate as EventListener,
+    );
     return () => {
-      window.removeEventListener('cookie-consent-updated', handleUpdate as EventListener);
+      window.removeEventListener(
+        "cookie-consent-updated",
+        handleUpdate as EventListener,
+      );
     };
   }, []);
 
@@ -103,7 +115,7 @@ export function GoogleAnalyticsLoader() {
 export function CookieSettingsLink() {
   const handleClick = () => {
     // Trigger cookie settings modal
-    const event = new CustomEvent('open-cookie-settings');
+    const event = new CustomEvent("open-cookie-settings");
     window.dispatchEvent(event);
   };
 

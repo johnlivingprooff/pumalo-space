@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { CldUploadWidget } from 'next-cloudinary';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { CldUploadWidget } from "next-cloudinary";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface ImageUploadProps {
   value?: string[];
@@ -13,10 +13,10 @@ interface ImageUploadProps {
 
 /**
  * Image Upload Component
- * 
+ *
  * Allows users to upload images to Cloudinary.
  * Used for property listings, user profiles, etc.
- * 
+ *
  * Setup Required:
  * 1. Add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME to .env
  * 2. Create upload preset in Cloudinary (Settings → Upload)
@@ -26,7 +26,7 @@ export function ImageUpload({
   value = [],
   onChange,
   maxImages = 5,
-  folder = 'pumalo/properties',
+  folder = "pumalo/properties",
 }: ImageUploadProps) {
   const [uploadedImages, setUploadedImages] = useState<string[]>(value);
 
@@ -48,9 +48,7 @@ export function ImageUpload({
   const handleBatchUpload = (results: any) => {
     // If multiple files are uploaded at once
     if (Array.isArray(results)) {
-      const newUrls = results
-        .map(r => r.info?.secure_url)
-        .filter(Boolean);
+      const newUrls = results.map((r) => r.info?.secure_url).filter(Boolean);
       const updatedImages = [...uploadedImages, ...newUrls];
       setUploadedImages(updatedImages);
       onChange(updatedImages);
@@ -81,18 +79,20 @@ export function ImageUpload({
           {uploadedImages.map((url, index) => (
             <div
               key={url}
-              className={`relative group aspect-square rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-blue-300' : 'border-gray-200 hover:border-blue-300 cursor-pointer'}`}
+              className={`relative group aspect-square rounded-lg overflow-hidden border-2 ${index === 0 ? "border-blue-300" : "border-gray-200 hover:border-blue-300 cursor-pointer"}`}
               onClick={() => index !== 0 && setAsMain(url)}
-              role={index !== 0 ? 'button' : undefined}
+              role={index !== 0 ? "button" : undefined}
               tabIndex={index !== 0 ? 0 : -1}
               onKeyDown={(e) => {
-                if (index !== 0 && (e.key === 'Enter' || e.key === ' ')) {
+                if (index !== 0 && (e.key === "Enter" || e.key === " ")) {
                   e.preventDefault();
                   setAsMain(url);
                 }
               }}
-              title={index === 0 ? 'Main image' : 'Click to set as main image'}
-              aria-label={index === 0 ? 'Main image' : 'Click to set as main image'}
+              title={index === 0 ? "Main image" : "Click to set as main image"}
+              aria-label={
+                index === 0 ? "Main image" : "Click to set as main image"
+              }
             >
               <Image
                 src={url}
@@ -109,8 +109,18 @@ export function ImageUpload({
                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                 title="Remove image"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
               {index !== 0 && (
@@ -140,10 +150,10 @@ export function ImageUpload({
             folder,
             multiple: true,
             maxFiles: maxImages,
-            resourceType: 'image',
-            clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+            resourceType: "image",
+            clientAllowedFormats: ["jpg", "jpeg", "png", "webp"],
             maxFileSize: 5000000, // 5MB per image
-            sources: ['local', 'url', 'camera'],
+            sources: ["local", "url", "camera"],
             showSkipCropButton: false,
             cropping: false,
           }}
@@ -182,7 +192,9 @@ export function ImageUpload({
                   {uploadedImages.length} / {maxImages} images uploaded
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  You can select up to {maxImages - uploadedImages.length} more image{maxImages - uploadedImages.length !== 1 ? 's' : ''} at once
+                  You can select up to {maxImages - uploadedImages.length} more
+                  image{maxImages - uploadedImages.length !== 1 ? "s" : ""} at
+                  once
                 </p>
               </div>
             </button>
@@ -194,7 +206,7 @@ export function ImageUpload({
       {uploadedImages.length === 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-800">
-            <strong>📝 Note:</strong> Upload high-quality images of your property. 
+            <strong>Note:</strong> Upload high-quality images of your property.
             The first image will be the main display image.
           </p>
         </div>

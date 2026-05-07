@@ -1,4 +1,4 @@
-export type PropertyType = 'rent' | 'buy' | 'lodge';
+export type PropertyType = "rent" | "buy" | "lodge";
 
 export interface Property {
   id: string;

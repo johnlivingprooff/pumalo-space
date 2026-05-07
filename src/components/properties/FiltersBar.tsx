@@ -15,7 +15,15 @@ export type FiltersBarProps = {
   };
 };
 
-function Pill({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
+function Pill({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
@@ -81,10 +89,10 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
 
   // Local state for slider values
   const [minSlider, setMinSlider] = React.useState<number>(
-    selected.minPrice ? Number(selected.minPrice) : DEFAULT_MIN
+    selected.minPrice ? Number(selected.minPrice) : DEFAULT_MIN,
   );
   const [maxSlider, setMaxSlider] = React.useState<number>(
-    selected.maxPrice ? Number(selected.maxPrice) : DEFAULT_MAX
+    selected.maxPrice ? Number(selected.maxPrice) : DEFAULT_MAX,
   );
 
   // Sync local slider with URL params
@@ -124,7 +132,9 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Filters</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">
+          Filters
+        </h2>
         <button
           type="button"
           onClick={() => router.push(pathname)}
@@ -137,14 +147,20 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
       <div className="space-y-5">
         {/* Type - Pills */}
         <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Type</p>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Type
+          </p>
           <div className="flex items-center gap-2 overflow-x-auto">
             {[
               { key: "rent", label: "Rent" },
               { key: "buy", label: "Buy" },
               { key: "lodge", label: "Lodge" },
             ].map((opt) => (
-              <Pill key={opt.key} active={(selected.type || "") === opt.key} onClick={() => toggleParam("type", opt.key)}>
+              <Pill
+                key={opt.key}
+                active={(selected.type || "") === opt.key}
+                onClick={() => toggleParam("type", opt.key)}
+              >
                 {opt.label}
               </Pill>
             ))}
@@ -153,7 +169,10 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
 
         {/* City - Dropdown */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-city">
+          <label
+            className="text-xs font-medium text-gray-500 uppercase tracking-wider"
+            htmlFor="filter-city"
+          >
             City
           </label>
           <select
@@ -173,7 +192,10 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
 
         {/* Bedrooms - Dropdown */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-bedrooms">
+          <label
+            className="text-xs font-medium text-gray-500 uppercase tracking-wider"
+            htmlFor="filter-bedrooms"
+          >
             Bedrooms (minimum)
           </label>
           <select
@@ -192,7 +214,10 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
 
         {/* Bathrooms - Dropdown */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider" htmlFor="filter-bathrooms">
+          <label
+            className="text-xs font-medium text-gray-500 uppercase tracking-wider"
+            htmlFor="filter-bathrooms"
+          >
             Bathrooms (minimum)
           </label>
           <select
@@ -210,8 +235,10 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
 
         {/* Price - Dual-thumb Range Slider */}
         <div className="space-y-3">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Price Range (KSH)</p>
-          
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Price Range (KSH)
+          </p>
+
           {/* Display current values */}
           <div className="flex items-center justify-between text-sm text-gray-700">
             <span className="font-medium">{formatPrice(minSlider)}</span>
@@ -223,7 +250,7 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
           <div className="relative pt-2 pb-1">
             {/* Track background */}
             <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 rounded-full -translate-y-1/2" />
-            
+
             {/* Active range highlight */}
             <div
               className="absolute top-1/2 h-1.5 bg-primary-600 rounded-full -translate-y-1/2"

@@ -1,11 +1,11 @@
-import React from 'react';
-import { PropertyCard } from '@/components/properties/PropertyCard';
-import { Button } from '@/components/ui/Button';
-import { HeroSection } from '@/components/HeroSection';
-import Link from 'next/link';
-import prisma from '@/lib/prisma';
-import { stackServerApp } from '@stack/server';
-import Image from 'next/image';
+import React from "react";
+import { PropertyCard } from "@/components/properties/PropertyCard";
+import { Button } from "@/components/ui/Button";
+import { HeroSection } from "@/components/HeroSection";
+import Link from "next/link";
+import prisma from "@/lib/prisma";
+import { stackServerApp } from "@stack/server";
+import Image from "next/image";
 
 async function getFeaturedProperties() {
   try {
@@ -23,13 +23,13 @@ async function getFeaturedProperties() {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
-    
+
     return properties;
   } catch (error) {
-    console.error('Error fetching properties:', error);
+    console.error("Error fetching properties:", error);
     return [];
   }
 }
@@ -40,25 +40,47 @@ async function getUserFavorites(userId: string) {
       where: { userId },
       select: { propertyId: true },
     });
-    return new Set(favorites.map(f => f.propertyId));
+    return new Set(favorites.map((f) => f.propertyId));
   } catch (error) {
     return new Set<string>();
   }
 }
 
 const popularDestinations = [
-  { name: 'Nairobi', count: 245, image: 'https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=800&h=600&fit=crop&q=80' },
-  { name: 'Mombasa', count: 189, image: 'https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop&q=80' },
-  { name: 'Kisumu', count: 127, image: 'https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=800&h=600&fit=crop&q=80' },
-  { name: 'Nakuru', count: 98, image: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&h=600&fit=crop&q=80' },
+  {
+    name: "Nairobi",
+    count: 245,
+    image:
+      "https://images.unsplash.com/photo-1611348524140-53c9a25263d6?w=800&h=600&fit=crop&q=80",
+  },
+  {
+    name: "Mombasa",
+    count: 189,
+    image:
+      "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop&q=80",
+  },
+  {
+    name: "Kisumu",
+    count: 127,
+    image:
+      "https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=800&h=600&fit=crop&q=80",
+  },
+  {
+    name: "Nakuru",
+    count: 98,
+    image:
+      "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&h=600&fit=crop&q=80",
+  },
 ];
 
 export default async function HomePage() {
   const featuredProperties = await getFeaturedProperties();
-  
+
   const user = await stackServerApp.getUser();
-  const favoriteIds = user ? await getUserFavorites(user.id) : new Set<string>();
-  
+  const favoriteIds = user
+    ? await getUserFavorites(user.id)
+    : new Set<string>();
+
   return (
     <div className="min-h-screen">
       <HeroSection />
@@ -73,12 +95,12 @@ export default async function HomePage() {
               Handpicked properties just for you
             </p>
           </div>
-          
+
           {featuredProperties.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {featuredProperties.map((property: any) => (
-                  <PropertyCard 
+                  <PropertyCard
                     key={property.id}
                     id={property.id}
                     title={property.title}
@@ -86,15 +108,23 @@ export default async function HomePage() {
                     price={property.price}
                     currency={property.currency}
                     pricePerPeriod={property.pricePeriod || undefined}
-                    image={property.images[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80'}
+                    image={
+                      property.images[0] ||
+                      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80"
+                    }
                     rating={property.rating}
                     reviewCount={property.reviewCount}
-                    propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
+                    propertyType={
+                      property.propertyType.toLowerCase() as
+                        | "rent"
+                        | "buy"
+                        | "lodge"
+                    }
                     initialIsFavorite={favoriteIds.has(property.id)}
                   />
                 ))}
               </div>
-              
+
               <div className="text-center">
                 <Link href="/properties">
                   <Button variant="primary" size="lg">
@@ -105,7 +135,9 @@ export default async function HomePage() {
             </>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600 mb-4">No properties found. Add some properties to get started!</p>
+              <p className="text-gray-600 mb-4">
+                No properties found. Add some properties to get started!
+              </p>
               <Link href="/host/create-listing">
                 <Button variant="primary" size="lg">
                   List Your First Property
@@ -126,7 +158,7 @@ export default async function HomePage() {
               Explore properties in trending locations
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {popularDestinations.map((destination) => (
               <Link
@@ -145,8 +177,12 @@ export default async function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                  <h3 className="text-2xl font-bold mb-1">{destination.name}</h3>
-                  <p className="text-sm text-blue-100">{destination.count} properties</p>
+                  <h3 className="text-2xl font-bold mb-1">
+                    {destination.name}
+                  </h3>
+                  <p className="text-sm text-blue-100">
+                    {destination.count} properties
+                  </p>
                 </div>
               </Link>
             ))}
@@ -164,7 +200,7 @@ export default async function HomePage() {
               Finding your perfect space is easy
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
@@ -175,7 +211,7 @@ export default async function HomePage() {
                 Browse through thousands of verified properties
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-primary-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                 2
@@ -185,7 +221,7 @@ export default async function HomePage() {
                 Compare prices, amenities, and locations
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-primary-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                 3

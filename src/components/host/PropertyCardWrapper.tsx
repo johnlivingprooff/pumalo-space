@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 interface PropertyCardWrapperProps {
   propertyId: string;
   children: React.ReactNode;
 }
 
-export function PropertyCardWrapper({ propertyId, children }: PropertyCardWrapperProps) {
+export function PropertyCardWrapper({
+  propertyId,
+  children,
+}: PropertyCardWrapperProps) {
   return (
     <Link
       href={`/host/listings/${propertyId}`}

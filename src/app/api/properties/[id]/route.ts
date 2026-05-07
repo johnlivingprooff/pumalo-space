@@ -1,14 +1,14 @@
 // Ensure this route is always dynamic and not statically prerendered
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -35,7 +35,7 @@ export async function GET(
             },
           },
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
           take: 10,
         },
@@ -48,36 +48,36 @@ export async function GET(
         },
       },
     });
-    
+
     if (!property) {
       return NextResponse.json(
-        { error: 'Property not found' },
-        { status: 404 }
+        { error: "Property not found" },
+        { status: 404 },
       );
     }
-    
+
     return NextResponse.json(property);
   } catch (error) {
-    console.error('Error fetching property:', error);
+    console.error("Error fetching property:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch property' },
-      { status: 500 }
+      { error: "Failed to fetch property" },
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Import stackServerApp for authentication
-    const { stackServerApp } = await import('@stack/server');
+    const { stackServerApp } = await import("@stack/server");
 
     // Verify user is authenticated
     const user = await stackServerApp.getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -90,29 +90,50 @@ export async function PUT(
     });
 
     if (!existingProperty) {
-      return NextResponse.json({ error: 'Property not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 },
+      );
     }
 
     if (existingProperty.hostId !== user.id) {
-      return NextResponse.json({ error: 'You do not have permission to edit this property' }, { status: 403 });
+      return NextResponse.json(
+        { error: "You do not have permission to edit this property" },
+        { status: 403 },
+      );
     }
 
     // Validate required fields
     const requiredFields = [
-      'title', 'description', 'propertyType', 'address', 'city', 'country',
-      'price', 'images', 'bedrooms', 'bathrooms', 'maxGuests'
+      "title",
+      "description",
+      "propertyType",
+      "address",
+      "city",
+      "country",
+      "price",
+      "images",
+      "bedrooms",
+      "bathrooms",
+      "maxGuests",
     ];
 
     for (const field of requiredFields) {
       if (!body[field]) {
-        return NextResponse.json({ error: `Missing required field: ${field}` }, { status: 400 });
+        return NextResponse.json(
+          { error: `Missing required field: ${field}` },
+          { status: 400 },
+        );
       }
     }
 
     // Validate property type
-    const validTypes = ['RENT', 'BUY', 'LODGE'];
+    const validTypes = ["RENT", "BUY", "LODGE"];
     if (!validTypes.includes(body.propertyType)) {
-      return NextResponse.json({ error: 'Invalid property type' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid property type" },
+        { status: 400 },
+      );
     }
 
     const property = await prisma.property.update({
@@ -138,26 +159,26 @@ export async function PUT(
 
     return NextResponse.json(property);
   } catch (error) {
-    console.error('Error updating property:', error);
+    console.error("Error updating property:", error);
     return NextResponse.json(
-      { error: 'Failed to update property' },
-      { status: 500 }
+      { error: "Failed to update property" },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Import stackServerApp for authentication
-    const { stackServerApp } = await import('@/../stack/server');
+    const { stackServerApp } = await import("@/../stack/server");
 
     // Verify user is authenticated
     const user = await stackServerApp.getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -169,11 +190,17 @@ export async function DELETE(
     });
 
     if (!existingProperty) {
-      return NextResponse.json({ error: 'Property not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 },
+      );
     }
 
     if (existingProperty.hostId !== user.id) {
-      return NextResponse.json({ error: 'You do not have permission to delete this property' }, { status: 403 });
+      return NextResponse.json(
+        { error: "You do not have permission to delete this property" },
+        { status: 403 },
+      );
     }
 
     // Delete the property
@@ -181,12 +208,15 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ success: true, message: 'Property deleted successfully' });
+    return NextResponse.json({
+      success: true,
+      message: "Property deleted successfully",
+    });
   } catch (error) {
-    console.error('Error deleting property:', error);
+    console.error("Error deleting property:", error);
     return NextResponse.json(
-      { error: 'Failed to delete property' },
-      { status: 500 }
+      { error: "Failed to delete property" },
+      { status: 500 },
     );
   }
 }

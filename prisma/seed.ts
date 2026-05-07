@@ -1,47 +1,55 @@
-import { PrismaClient, PropertyType } from '@prisma/client';
+import { PrismaClient, PropertyType } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seed...');
+  console.log("🌱 Starting database seed...");
 
   // Create a demo host user
   const host = await prisma.user.upsert({
-    where: { email: 'host@pumalo.space' },
+    where: { email: "host@pumalo.space" },
     update: {},
     create: {
-      email: 'host@pumalo.space',
-      name: 'Demo Host',
-      firstName: 'Demo',
-      lastName: 'Host',
+      email: "host@pumalo.space",
+      name: "Demo Host",
+      firstName: "Demo",
+      lastName: "Host",
       verified: true,
       isHost: true,
-      bio: 'Experienced property host with 50+ properties',
+      bio: "Experienced property host with 50+ properties",
     },
   });
 
-  console.log('✅ Created demo host user');
+  console.log("✅ Created demo host user");
 
   // Create demo properties with high-quality Unsplash images
   const properties = [
     {
-      title: 'Modern Downtown Apartment',
-      description: 'Beautiful modern apartment in the heart of Nairobi with stunning city views. Features include high-speed WiFi, fully equipped kitchen, and 24/7 security.',
+      title: "Modern Downtown Apartment",
+      description:
+        "Beautiful modern apartment in the heart of Nairobi with stunning city views. Features include high-speed WiFi, fully equipped kitchen, and 24/7 security.",
       propertyType: PropertyType.RENT,
-      address: '123 Kenyatta Avenue',
-      city: 'Nairobi',
-      country: 'Kenya',
+      address: "123 Kenyatta Avenue",
+      city: "Nairobi",
+      country: "Kenya",
       latitude: -1.2864,
       longitude: 36.8172,
       price: 25000,
-      currency: 'KSH',
-      pricePeriod: 'night',
+      currency: "KSH",
+      pricePeriod: "night",
       images: [
-        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop&q=80',
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop&q=80",
       ],
-      amenities: ['WiFi', 'Kitchen', 'Air Conditioning', 'Parking', 'Security', 'Gym'],
+      amenities: [
+        "WiFi",
+        "Kitchen",
+        "Air Conditioning",
+        "Parking",
+        "Security",
+        "Gym",
+      ],
       bedrooms: 2,
       bathrooms: 2,
       maxGuests: 4,
@@ -51,23 +59,32 @@ async function main() {
       hostId: host.id,
     },
     {
-      title: 'Luxury Beachfront Villa',
-      description: 'Stunning beachfront villa in Mombasa with private pool and direct beach access. Perfect for families and groups looking for a luxury getaway.',
+      title: "Luxury Beachfront Villa",
+      description:
+        "Stunning beachfront villa in Mombasa with private pool and direct beach access. Perfect for families and groups looking for a luxury getaway.",
       propertyType: PropertyType.LODGE,
-      address: '45 Diani Beach Road',
-      city: 'Mombasa',
-      country: 'Kenya',
+      address: "45 Diani Beach Road",
+      city: "Mombasa",
+      country: "Kenya",
       latitude: -4.0435,
       longitude: 39.6682,
       price: 85000,
-      currency: 'KSH',
-      pricePeriod: 'night',
+      currency: "KSH",
+      pricePeriod: "night",
       images: [
-        'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1200&h=800&fit=crop&q=80',
+        "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1200&h=800&fit=crop&q=80",
       ],
-      amenities: ['Pool', 'Beach Access', 'WiFi', 'Kitchen', 'BBQ', 'Ocean View', 'Parking'],
+      amenities: [
+        "Pool",
+        "Beach Access",
+        "WiFi",
+        "Kitchen",
+        "BBQ",
+        "Ocean View",
+        "Parking",
+      ],
       bedrooms: 4,
       bathrooms: 3,
       maxGuests: 8,
@@ -77,22 +94,23 @@ async function main() {
       hostId: host.id,
     },
     {
-      title: 'Spacious Family Home',
-      description: 'Perfect family home in Kisumu with large garden and modern amenities. Ideal for those looking to settle down in a peaceful neighborhood.',
+      title: "Spacious Family Home",
+      description:
+        "Perfect family home in Kisumu with large garden and modern amenities. Ideal for those looking to settle down in a peaceful neighborhood.",
       propertyType: PropertyType.BUY,
-      address: '78 Milimani Estate',
-      city: 'Kisumu',
-      country: 'Kenya',
+      address: "78 Milimani Estate",
+      city: "Kisumu",
+      country: "Kenya",
       latitude: -0.0917,
-      longitude: 34.7680,
+      longitude: 34.768,
       price: 12500000,
-      currency: 'KSH',
+      currency: "KSH",
       images: [
-        'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&h=800&fit=crop&q=80',
+        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&h=800&fit=crop&q=80",
       ],
-      amenities: ['Garden', 'Garage', 'WiFi', 'Security', 'Solar Panels'],
+      amenities: ["Garden", "Garage", "WiFi", "Security", "Solar Panels"],
       bedrooms: 4,
       bathrooms: 3,
       maxGuests: 6,
@@ -102,22 +120,23 @@ async function main() {
       hostId: host.id,
     },
     {
-      title: 'Cozy Studio Apartment',
-      description: 'Charming studio apartment in Nakuru, perfect for solo travelers or couples. Close to major attractions and public transport.',
+      title: "Cozy Studio Apartment",
+      description:
+        "Charming studio apartment in Nakuru, perfect for solo travelers or couples. Close to major attractions and public transport.",
       propertyType: PropertyType.RENT,
-      address: '12 Kenyatta Street',
-      city: 'Nakuru',
-      country: 'Kenya',
+      address: "12 Kenyatta Street",
+      city: "Nakuru",
+      country: "Kenya",
       latitude: -0.3031,
-      longitude: 36.0800,
+      longitude: 36.08,
       price: 15000,
-      currency: 'KSH',
-      pricePeriod: 'night',
+      currency: "KSH",
+      pricePeriod: "night",
       images: [
-        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=1200&h=800&fit=crop&q=80',
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=1200&h=800&fit=crop&q=80",
       ],
-      amenities: ['WiFi', 'Kitchen', 'Heating', 'Workspace'],
+      amenities: ["WiFi", "Kitchen", "Heating", "Workspace"],
       bedrooms: 1,
       bathrooms: 1,
       maxGuests: 2,
@@ -127,23 +146,32 @@ async function main() {
       hostId: host.id,
     },
     {
-      title: 'Penthouse Suite with City Views',
-      description: 'Luxurious penthouse in Westlands with panoramic city views. Features include a private terrace, home theater, and concierge service.',
+      title: "Penthouse Suite with City Views",
+      description:
+        "Luxurious penthouse in Westlands with panoramic city views. Features include a private terrace, home theater, and concierge service.",
       propertyType: PropertyType.RENT,
-      address: '89 Westlands Road',
-      city: 'Nairobi',
-      country: 'Kenya',
+      address: "89 Westlands Road",
+      city: "Nairobi",
+      country: "Kenya",
       latitude: -1.2676,
       longitude: 36.8098,
       price: 55000,
-      currency: 'KSH',
-      pricePeriod: 'night',
+      currency: "KSH",
+      pricePeriod: "night",
       images: [
-        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop&q=80',
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop&q=80",
       ],
-      amenities: ['WiFi', 'Terrace', 'Gym', 'Pool', 'Concierge', 'Parking', 'City View'],
+      amenities: [
+        "WiFi",
+        "Terrace",
+        "Gym",
+        "Pool",
+        "Concierge",
+        "Parking",
+        "City View",
+      ],
       bedrooms: 3,
       bathrooms: 3,
       maxGuests: 6,
@@ -153,22 +181,23 @@ async function main() {
       hostId: host.id,
     },
     {
-      title: 'Countryside Cottage',
-      description: 'Peaceful cottage in the countryside near Eldoret. Perfect for a quiet retreat with nature trails and farm-fresh produce.',
+      title: "Countryside Cottage",
+      description:
+        "Peaceful cottage in the countryside near Eldoret. Perfect for a quiet retreat with nature trails and farm-fresh produce.",
       propertyType: PropertyType.LODGE,
-      address: 'Soy Road',
-      city: 'Eldoret',
-      country: 'Kenya',
+      address: "Soy Road",
+      city: "Eldoret",
+      country: "Kenya",
       latitude: 0.5143,
       longitude: 35.2698,
       price: 35000,
-      currency: 'KSH',
-      pricePeriod: 'night',
+      currency: "KSH",
+      pricePeriod: "night",
       images: [
-        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&h=800&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&h=800&fit=crop&q=80',
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&h=800&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&h=800&fit=crop&q=80",
       ],
-      amenities: ['Garden', 'Fireplace', 'Kitchen', 'Hiking', 'Farm Tours'],
+      amenities: ["Garden", "Fireplace", "Kitchen", "Hiking", "Farm Tours"],
       bedrooms: 2,
       bathrooms: 1,
       maxGuests: 4,
@@ -181,24 +210,24 @@ async function main() {
 
   for (const propertyData of properties) {
     await prisma.property.upsert({
-      where: { 
-        id: `seed-${propertyData.title.toLowerCase().replace(/\s+/g, '-')}` 
+      where: {
+        id: `seed-${propertyData.title.toLowerCase().replace(/\s+/g, "-")}`,
       },
-      update: {},
+      update: { images: propertyData.images },
       create: {
-        id: `seed-${propertyData.title.toLowerCase().replace(/\s+/g, '-')}`,
+        id: `seed-${propertyData.title.toLowerCase().replace(/\s+/g, "-")}`,
         ...propertyData,
       },
     });
   }
 
-  console.log('✅ Created demo properties');
+  console.log("✅ Created demo properties");
   console.log(`🎉 Seed completed! Created ${properties.length} properties`);
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Error seeding database:', e);
+    console.error("❌ Error seeding database:", e);
     process.exit(1);
   })
   .finally(async () => {

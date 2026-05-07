@@ -19,8 +19,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Pumalo Space - Find Your Perfect Property",
-  description: "Discover amazing properties for rent, buy, or lodge. Your next home or vacation destination awaits on Pumalo Space.",
-  keywords: ["property rental", "buy property", "lodge", "accommodation", "real estate"],
+  description:
+    "Discover amazing properties for rent, buy, or lodge. Your next home or vacation destination awaits on Pumalo Space.",
+  keywords: [
+    "property rental",
+    "buy property",
+    "lodge",
+    "accommodation",
+    "real estate",
+  ],
   authors: [{ name: "Pumalo Space" }],
   icons: {
     icon: "/logo_blue.ico",
@@ -48,9 +55,7 @@ export default function RootLayout({
           <StackTheme>
             <div className="flex flex-col min-h-screen">
               <Header />
-              <main className="flex-1">
-                {children}
-              </main>
+              <main className="flex-1">{children}</main>
               <Footer />
             </div>
             <CookieConsent />

@@ -1,6 +1,6 @@
 /**
  * Simple In-Memory Cache for Performance Optimization
- * 
+ *
  * For production, consider using Redis or similar distributed cache
  */
 
@@ -13,7 +13,8 @@ class SimpleCache {
   private cache: Map<string, CacheEntry<any>>;
   private readonly defaultTTL: number;
 
-  constructor(defaultTTL = 5 * 60 * 1000) { // 5 minutes default
+  constructor(defaultTTL = 5 * 60 * 1000) {
+    // 5 minutes default
     this.cache = new Map();
     this.defaultTTL = defaultTTL;
 
@@ -30,7 +31,7 @@ class SimpleCache {
 
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -64,10 +65,10 @@ class SimpleCache {
   async getOrSet<T>(
     key: string,
     fetchFn: () => Promise<T>,
-    ttl?: number
+    ttl?: number,
   ): Promise<T> {
     const cached = this.get<T>(key);
-    
+
     if (cached !== null) {
       return cached;
     }
@@ -99,8 +100,8 @@ export const cacheKeys = {
   userBookings: (userId: string) => `bookings:${userId}`,
   userProperties: (userId: string) => `user-properties:${userId}`,
   propertyReviews: (propertyId: string) => `reviews:${propertyId}`,
-  featuredProperties: () => 'properties:featured',
-  citiesList: () => 'cities:list',
+  featuredProperties: () => "properties:featured",
+  citiesList: () => "cities:list",
 };
 
 // Cache invalidation helpers
@@ -109,15 +110,15 @@ export const invalidateCache = {
     cache.delete(cacheKeys.property(id));
     cache.invalidatePattern(`^properties:`); // Invalidate all property lists
   },
-  
+
   userFavorites: (userId: string) => {
     cache.delete(cacheKeys.userFavorites(userId));
   },
-  
+
   userBookings: (userId: string) => {
     cache.delete(cacheKeys.userBookings(userId));
   },
-  
+
   propertyReviews: (propertyId: string) => {
     cache.delete(cacheKeys.propertyReviews(propertyId));
     cache.delete(cacheKeys.property(propertyId)); // Also invalidate property (has review count)

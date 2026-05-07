@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function RemoveFavoriteButton({ propertyId }: { propertyId: string }) {
   const router = useRouter();
@@ -12,14 +12,16 @@ export function RemoveFavoriteButton({ propertyId }: { propertyId: string }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/favorites?propertyId=${propertyId}`, { method: 'DELETE' });
+      const res = await fetch(`/api/favorites?propertyId=${propertyId}`, {
+        method: "DELETE",
+      });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to remove');
+        throw new Error(data.error || "Failed to remove");
       }
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to remove');
+      setError(e instanceof Error ? e.message : "Failed to remove");
     } finally {
       setLoading(false);
     }
@@ -32,7 +34,7 @@ export function RemoveFavoriteButton({ propertyId }: { propertyId: string }) {
         disabled={loading}
         className="px-3 py-1.5 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 disabled:opacity-60"
       >
-        {loading ? 'Removing…' : 'Remove'}
+        {loading ? "Removing…" : "Remove"}
       </button>
       {error && <span className="text-xs text-red-600">{error}</span>}
     </div>

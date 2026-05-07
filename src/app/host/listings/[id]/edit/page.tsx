@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { ImageUpload } from '@/components/ui/ImageUpload';
-import { useUser } from '@stackframe/stack';
+import React, { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { useUser } from "@stackframe/stack";
 
-type PropertyType = 'RENT' | 'BUY' | 'LODGE';
+type PropertyType = "RENT" | "BUY" | "LODGE";
 
 interface PropertyFormData {
   title: string;
@@ -32,19 +32,19 @@ interface PropertyFormData {
 }
 
 const initialFormData: PropertyFormData = {
-  title: '',
-  description: '',
-  propertyType: 'RENT',
-  address: '',
-  city: '',
-  state: '',
-  country: 'Kenya',
-  zipCode: '',
+  title: "",
+  description: "",
+  propertyType: "RENT",
+  address: "",
+  city: "",
+  state: "",
+  country: "Kenya",
+  zipCode: "",
   latitude: 0,
   longitude: 0,
   price: 0,
-  currency: 'KSH',
-  pricePeriod: 'night',
+  currency: "KSH",
+  pricePeriod: "night",
   images: [],
   amenities: [],
   bedrooms: 1,
@@ -54,9 +54,23 @@ const initialFormData: PropertyFormData = {
 };
 
 const commonAmenities = [
-  'WiFi', 'Kitchen', 'Washer', 'Dryer', 'Air conditioning', 'Heating',
-  'TV', 'Pool', 'Hot tub', 'Gym', 'Parking', 'Elevator', 'Balcony',
-  'Garden', 'Pet friendly', 'Smoking allowed', 'Wheelchair accessible'
+  "WiFi",
+  "Kitchen",
+  "Washer",
+  "Dryer",
+  "Air conditioning",
+  "Heating",
+  "TV",
+  "Pool",
+  "Hot tub",
+  "Gym",
+  "Parking",
+  "Elevator",
+  "Balcony",
+  "Garden",
+  "Pet friendly",
+  "Smoking allowed",
+  "Wheelchair accessible",
 ];
 
 export default function EditListingPage() {
@@ -68,7 +82,7 @@ export default function EditListingPage() {
   const [isLoadingProperty, setIsLoadingProperty] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
-  const [customAmenity, setCustomAmenity] = useState('');
+  const [customAmenity, setCustomAmenity] = useState("");
 
   const propertyId = params.id as string;
   const totalSteps = 4;
@@ -81,41 +95,46 @@ export default function EditListingPage() {
       try {
         const response = await fetch(`/api/properties/${propertyId}`);
         if (!response.ok) {
-          throw new Error('Property not found');
+          throw new Error("Property not found");
         }
 
         const property = await response.json();
 
         // Check if user owns this property
         if (property.hostId !== user.id) {
-          throw new Error('You do not have permission to edit this property');
+          throw new Error("You do not have permission to edit this property");
         }
 
         // Populate form with existing data
         setFormData({
-          title: property.title || '',
-          description: property.description || '',
-          propertyType: property.propertyType || 'RENT',
-          address: property.address || '',
-          city: property.city || '',
-          state: property.state || '',
-          country: property.country || 'Kenya',
-          zipCode: property.zipCode || '',
+          title: property.title || "",
+          description: property.description || "",
+          propertyType: property.propertyType || "RENT",
+          address: property.address || "",
+          city: property.city || "",
+          state: property.state || "",
+          country: property.country || "Kenya",
+          zipCode: property.zipCode || "",
           latitude: property.latitude || 0,
           longitude: property.longitude || 0,
           price: property.price || 0,
-          currency: property.currency || 'KSH',
-          pricePeriod: property.pricePeriod || 'night',
+          currency: property.currency || "KSH",
+          pricePeriod: property.pricePeriod || "night",
           images: property.images || [],
           amenities: property.amenities || [],
           bedrooms: property.bedrooms || 1,
           bathrooms: property.bathrooms || 1,
           maxGuests: property.maxGuests || 2,
-          availability: property.availability?.map((date: any) => new Date(date).toISOString().split('T')[0]) || [],
+          availability:
+            property.availability?.map(
+              (date: any) => new Date(date).toISOString().split("T")[0],
+            ) || [],
         });
       } catch (err) {
-        console.error('Error fetching property:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load property');
+        console.error("Error fetching property:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load property",
+        );
       } finally {
         setIsLoadingProperty(false);
       }
@@ -125,38 +144,49 @@ export default function EditListingPage() {
   }, [propertyId, user]);
 
   const handleInputChange = (field: keyof PropertyFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAmenityToggle = (amenity: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       amenities: prev.amenities.includes(amenity)
-        ? prev.amenities.filter(a => a !== amenity)
-        : [...prev.amenities, amenity]
+        ? prev.amenities.filter((a) => a !== amenity)
+        : [...prev.amenities, amenity],
     }));
   };
 
   const handleAddCustomAmenity = () => {
-    if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
-      setFormData(prev => ({
+    if (
+      customAmenity.trim() &&
+      !formData.amenities.includes(customAmenity.trim())
+    ) {
+      setFormData((prev) => ({
         ...prev,
-        amenities: [...prev.amenities, customAmenity.trim()]
+        amenities: [...prev.amenities, customAmenity.trim()],
       }));
-      setCustomAmenity('');
+      setCustomAmenity("");
     }
   };
 
   const validateStep = (step: number): boolean => {
     switch (step) {
       case 1:
-        return !!(formData.title && formData.description && formData.propertyType);
+        return !!(
+          formData.title &&
+          formData.description &&
+          formData.propertyType
+        );
       case 2:
         return !!(formData.address && formData.city && formData.country);
       case 3:
         return !!(formData.price > 0 && formData.images.length > 0);
       case 4:
-        return !!(formData.bedrooms > 0 && formData.bathrooms > 0 && formData.maxGuests > 0);
+        return !!(
+          formData.bedrooms > 0 &&
+          formData.bathrooms > 0 &&
+          formData.maxGuests > 0
+        );
       default:
         return false;
     }
@@ -164,12 +194,12 @@ export default function EditListingPage() {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
     }
   };
 
   const handleBack = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
   const handleSubmit = async () => {
@@ -182,26 +212,26 @@ export default function EditListingPage() {
       const submitData = {
         ...formData,
         hostId: user.id,
-        availability: formData.availability.map(date => new Date(date)),
+        availability: formData.availability.map((date) => new Date(date)),
       };
 
       const response = await fetch(`/api/properties/${propertyId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(submitData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update listing');
+        throw new Error(errorData.error || "Failed to update listing");
       }
 
-      router.push('/host/listings');
+      router.push("/host/listings");
     } catch (err) {
-      console.error('Error updating listing:', err);
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      console.error("Error updating listing:", err);
+      setError(err instanceof Error ? err.message : "Something went wrong");
       setIsLoading(false);
     }
   };
@@ -224,13 +254,28 @@ export default function EditListingPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            <svg
+              className="w-8 h-8 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Property</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Error Loading Property
+          </h1>
           <p className="text-gray-600 mb-6">{error}</p>
-          <Button onClick={() => router.push('/host/listings')} variant="primary">
+          <Button
+            onClick={() => router.push("/host/listings")}
+            variant="primary"
+          >
             Back to Listings
           </Button>
         </div>
@@ -243,7 +288,9 @@ export default function EditListingPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Listing</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Edit Listing
+          </h1>
           <p className="text-gray-600">Update your property information</p>
 
           {/* Progress Bar */}
@@ -252,7 +299,9 @@ export default function EditListingPage() {
               <span className="text-sm font-medium text-gray-700">
                 Step {currentStep} of {totalSteps}
               </span>
-              <span className="text-sm font-medium text-gray-700">{Math.round(progress)}%</span>
+              <span className="text-sm font-medium text-gray-700">
+                {Math.round(progress)}%
+              </span>
             </div>
             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
@@ -268,7 +317,9 @@ export default function EditListingPage() {
           {/* Step 1: Basic Information */}
           {currentStep === 1 && (
             <div className="p-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Basic Information</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                Basic Information
+              </h2>
 
               <div className="space-y-6">
                 <div>
@@ -279,7 +330,7 @@ export default function EditListingPage() {
                     type="text"
                     placeholder="e.g., Cozy 2BR Apartment in Westlands"
                     value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    onChange={(e) => handleInputChange("title", e.target.value)}
                   />
                 </div>
 
@@ -289,7 +340,12 @@ export default function EditListingPage() {
                   </label>
                   <select
                     value={formData.propertyType}
-                    onChange={(e) => handleInputChange('propertyType', e.target.value as PropertyType)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "propertyType",
+                        e.target.value as PropertyType,
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
                   >
                     <option value="RENT">For Rent</option>
@@ -306,7 +362,9 @@ export default function EditListingPage() {
                     rows={6}
                     placeholder="Describe your property, its features, and what makes it special..."
                     value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600 placeholder:text-gray-400"
                   />
                 </div>
@@ -317,7 +375,9 @@ export default function EditListingPage() {
           {/* Step 2: Location */}
           {currentStep === 2 && (
             <div className="p-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Location</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                Location
+              </h2>
 
               <div className="space-y-6">
                 <div>
@@ -328,7 +388,9 @@ export default function EditListingPage() {
                     type="text"
                     placeholder="e.g., 123 Main Street"
                     value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("address", e.target.value)
+                    }
                   />
                 </div>
 
@@ -341,7 +403,9 @@ export default function EditListingPage() {
                       type="text"
                       placeholder="e.g., Nairobi"
                       value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("city", e.target.value)
+                      }
                     />
                   </div>
 
@@ -353,7 +417,9 @@ export default function EditListingPage() {
                       type="text"
                       placeholder="e.g., Nairobi County"
                       value={formData.state}
-                      onChange={(e) => handleInputChange('state', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("state", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -367,7 +433,9 @@ export default function EditListingPage() {
                       type="text"
                       placeholder="e.g., Kenya"
                       value={formData.country}
-                      onChange={(e) => handleInputChange('country', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("country", e.target.value)
+                      }
                     />
                   </div>
 
@@ -379,7 +447,9 @@ export default function EditListingPage() {
                       type="text"
                       placeholder="e.g., 00100"
                       value={formData.zipCode}
-                      onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("zipCode", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -390,7 +460,9 @@ export default function EditListingPage() {
           {/* Step 3: Pricing & Images */}
           {currentStep === 3 && (
             <div className="p-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Pricing & Images</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                Pricing & Images
+              </h2>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -402,7 +474,12 @@ export default function EditListingPage() {
                       type="number"
                       placeholder="0"
                       value={formData.price}
-                      onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "price",
+                          parseFloat(e.target.value) || 0,
+                        )
+                      }
                     />
                   </div>
 
@@ -412,7 +489,9 @@ export default function EditListingPage() {
                     </label>
                     <select
                       value={formData.currency}
-                      onChange={(e) => handleInputChange('currency', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("currency", e.target.value)
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
                     >
                       <option value="KSH">KSH (Kenyan Shilling)</option>
@@ -427,7 +506,9 @@ export default function EditListingPage() {
                     </label>
                     <select
                       value={formData.pricePeriod}
-                      onChange={(e) => handleInputChange('pricePeriod', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("pricePeriod", e.target.value)
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
                     >
                       <option value="night">Per Night</option>
@@ -444,7 +525,7 @@ export default function EditListingPage() {
                   </label>
                   <ImageUpload
                     value={formData.images}
-                    onChange={(urls) => handleInputChange('images', urls)}
+                    onChange={(urls) => handleInputChange("images", urls)}
                     maxImages={10}
                     folder="pumalo/properties"
                   />
@@ -456,7 +537,9 @@ export default function EditListingPage() {
           {/* Step 4: Details & Amenities */}
           {currentStep === 4 && (
             <div className="p-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Details & Amenities</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                Details & Amenities
+              </h2>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -468,7 +551,12 @@ export default function EditListingPage() {
                       type="number"
                       min="0"
                       value={formData.bedrooms}
-                      onChange={(e) => handleInputChange('bedrooms', parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "bedrooms",
+                          parseInt(e.target.value) || 0,
+                        )
+                      }
                     />
                   </div>
 
@@ -481,7 +569,12 @@ export default function EditListingPage() {
                       min="0"
                       step="0.5"
                       value={formData.bathrooms}
-                      onChange={(e) => handleInputChange('bathrooms', parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "bathrooms",
+                          parseFloat(e.target.value) || 0,
+                        )
+                      }
                     />
                   </div>
 
@@ -493,7 +586,12 @@ export default function EditListingPage() {
                       type="number"
                       min="1"
                       value={formData.maxGuests}
-                      onChange={(e) => handleInputChange('maxGuests', parseInt(e.target.value) || 1)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "maxGuests",
+                          parseInt(e.target.value) || 1,
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -504,7 +602,10 @@ export default function EditListingPage() {
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
                     {commonAmenities.map((amenity) => (
-                      <label key={amenity} className="flex items-center space-x-2">
+                      <label
+                        key={amenity}
+                        className="flex items-center space-x-2"
+                      >
                         <input
                           type="checkbox"
                           checked={formData.amenities.includes(amenity)}
@@ -522,7 +623,9 @@ export default function EditListingPage() {
                       placeholder="Add custom amenity"
                       value={customAmenity}
                       onChange={(e) => setCustomAmenity(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleAddCustomAmenity()}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleAddCustomAmenity()
+                      }
                     />
                     <Button
                       type="button"
@@ -570,9 +673,7 @@ export default function EditListingPage() {
               </Button>
 
               <div className="flex items-center gap-4">
-                {error && (
-                  <p className="text-sm text-red-600">{error}</p>
-                )}
+                {error && <p className="text-sm text-red-600">{error}</p>}
 
                 {currentStep < totalSteps ? (
                   <Button
@@ -588,7 +689,7 @@ export default function EditListingPage() {
                     onClick={handleSubmit}
                     disabled={!validateStep(currentStep) || isLoading}
                   >
-                    {isLoading ? 'Updating Listing...' : 'Update Listing'}
+                    {isLoading ? "Updating Listing..." : "Update Listing"}
                   </Button>
                 )}
               </div>

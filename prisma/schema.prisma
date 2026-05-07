@@ -43,6 +43,12 @@ model User {
   reviews       Review[]
   favorites     Favorite[]
   hostProfile   HostProfile?
+  sentMessages  Message[]  @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  googleDriveToken GoogleDriveToken?
+  verificationDocuments VerificationDocument[]
+  propertyDrafts PropertyDraft[]
+  sentInquiries  Inquiry[]  @relation("SentInquiries")
   
   @@index([email])
   @@index([isHost])
@@ -94,6 +100,8 @@ model Property {
   bookings      Booking[]
   reviews       Review[]
   favorites     Favorite[]
+  messages      Message[]
+  inquiries     Inquiry[]
   
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -198,4 +206,126 @@ model HostProfile {
   updatedAt      DateTime @updatedAt
 
   @@map("host_profiles")
+}
+
+enum VerificationType {
+  ID
+  TITLE_DEED
+  OTHER
+}
+
+enum InquiryType {
+  OFFER        // BUY listings
+  RENTAL       // RENT listings
+  AVAILABILITY // LODGE listings
+  QUESTION     // Any listing
+}
+
+enum InquiryStatus {
+  NEW
+  VIEWED
+  RESPONDED
+  CLOSED
+}
+
+model PropertyDraft {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Json     // full form state
+  step      Int      @default(1)
+  title     String?  // denormalized for list display
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("property_drafts")
+}
+
+model GoogleDriveToken {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken  String   @db.Text
+  refreshToken String   @db.Text
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("google_drive_tokens")
+}
+
+model VerificationDocument {
+  id               String           @id @default(cuid())
+  userId           String
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider         String           @default("google")
+  fileId           String
+  fileName         String
+  mimeType         String
+  size             Int
+  verificationType VerificationType
+  webViewLink      String
+  webContentLink   String
+  createdAt        DateTime         @default(now())
+
+  @@index([userId])
+  @@map("verification_documents")
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  
+  // Sender and recipient
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient  User     @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+  
+  // Message content
+  content    String   @db.Text
+  isRead     Boolean  @default(false)
+  
+  // Optional property reference (for property inquiries)
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  
+  createdAt  DateTime @default(now())
+  readAt     DateTime?
+  
+  @@index([senderId])
+  @@index([recipientId])
+  @@index([senderId, recipientId])
+  @@index([propertyId])
+  @@map("messages")
+}
+
+model Inquiry {
+  id             String        @id @default(cuid())
+  type           InquiryType
+  status         InquiryStatus @default(NEW)
+
+  message        String        @db.Text
+  offerAmount    Float?        // OFFER type only
+  requestedDates Json?         // AVAILABILITY type: { checkIn, checkOut, guests }
+  requestViewing Boolean       @default(false)
+
+  // Relations
+  propertyId     String
+  property       Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  senderId       String
+  sender         User          @relation("SentInquiries", fields: [senderId], references: [id], onDelete: Cascade)
+
+  // Host response
+  hostReply      String?       @db.Text
+  repliedAt      DateTime?
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([propertyId])
+  @@index([senderId])
+  @@index([status])
+  @@map("inquiries")
 }

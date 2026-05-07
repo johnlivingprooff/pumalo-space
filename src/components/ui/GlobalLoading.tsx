@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export function GlobalLoading() {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,13 +11,13 @@ export function GlobalLoading() {
     const handleEnd = () => setIsLoading(false);
 
     // Listen for navigation events
-    window.addEventListener('beforeunload', handleStart);
-    
+    window.addEventListener("beforeunload", handleStart);
+
     // For client-side navigation, we can use a timeout-based approach
     // since turbopack doesn't expose a direct API
-    
+
     return () => {
-      window.removeEventListener('beforeunload', handleStart);
+      window.removeEventListener("beforeunload", handleStart);
     };
   }, []);
 
@@ -41,7 +41,10 @@ export function GlobalLoading() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="space-y-4">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-10 bg-gray-200 rounded-xl animate-pulse"></div>
+                    <div
+                      key={i}
+                      className="h-10 bg-gray-200 rounded-xl animate-pulse"
+                    ></div>
                   ))}
                 </div>
               </div>
@@ -49,7 +52,10 @@ export function GlobalLoading() {
             <main className="lg:col-span-3">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div
+                    key={i}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden"
+                  >
                     <div className="aspect-[4/3] bg-gray-200 animate-pulse"></div>
                     <div className="p-4 space-y-3">
                       <div className="h-5 w-3/4 bg-gray-200 rounded animate-pulse"></div>

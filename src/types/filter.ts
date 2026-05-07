@@ -1,4 +1,4 @@
-import type { PropertyType } from './property';
+import type { PropertyType } from "./property";
 
 export interface FilterOption {
   id: string;
@@ -46,5 +46,5 @@ export interface FilterState {
 export interface SortOption {
   id: string;
   label: string;
-  value: 'price-asc' | 'price-desc' | 'rating' | 'newest' | 'popular';
+  value: "price-asc" | "price-desc" | "rating" | "newest" | "popular";
 }

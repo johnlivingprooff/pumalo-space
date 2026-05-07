@@ -1,23 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { stackServerApp } from '@stack/server';
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { stackServerApp } from "@stack/server";
 
 export async function POST(request: NextRequest) {
   try {
     // Verify user is authenticated
     const stackUser = await stackServerApp.getUser();
     if (!stackUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse body (support JSON and form submissions)
-    const contentType = request.headers.get('content-type') || '';
+    const contentType = request.headers.get("content-type") || "";
     let body: any = {};
-    if (contentType.includes('application/json')) {
+    if (contentType.includes("application/json")) {
       body = await request.json();
     } else if (
-      contentType.includes('application/x-www-form-urlencoded') ||
-      contentType.includes('multipart/form-data')
+      contentType.includes("application/x-www-form-urlencoded") ||
+      contentType.includes("multipart/form-data")
     ) {
       const form = await request.formData();
       body = Object.fromEntries(form.entries());
@@ -31,21 +31,32 @@ export async function POST(request: NextRequest) {
     const rawPaymentMethod = body.paymentMethod;
     const rawAccountDetails = body.accountDetails;
 
-    const phone = typeof rawPhone === 'string' ? rawPhone.trim() : '';
-    const bio = typeof rawBio === 'string' ? rawBio.trim() : '';
-    const idType = typeof rawIdType === 'string' ? rawIdType.trim() : '';
-    const idNumber = typeof rawIdNumber === 'string' ? rawIdNumber.trim() : '';
-    const paymentMethod = typeof rawPaymentMethod === 'string' ? rawPaymentMethod.trim() : '';
+    const phone = typeof rawPhone === "string" ? rawPhone.trim() : "";
+    const bio = typeof rawBio === "string" ? rawBio.trim() : "";
+    const idType = typeof rawIdType === "string" ? rawIdType.trim() : "";
+    const idNumber = typeof rawIdNumber === "string" ? rawIdNumber.trim() : "";
+    const paymentMethod =
+      typeof rawPaymentMethod === "string" ? rawPaymentMethod.trim() : "";
     const accountDetails =
-      typeof rawAccountDetails === 'string'
+      typeof rawAccountDetails === "string"
         ? rawAccountDetails
         : rawAccountDetails != null
-        ? JSON.stringify(rawAccountDetails)
-        : '';
+          ? JSON.stringify(rawAccountDetails)
+          : "";
 
     // Validate required fields
-    if (!phone || !bio || !idType || !idNumber || !paymentMethod || !accountDetails) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (
+      !phone ||
+      !bio ||
+      !idType ||
+      !idNumber ||
+      !paymentMethod ||
+      !accountDetails
+    ) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
     }
 
     // Persist onboarding details and set user as host
@@ -86,13 +97,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       user: updatedUser,
-      message: 'Successfully completed host onboarding',
+      message: "Successfully completed host onboarding",
     });
   } catch (error) {
-    console.error('Error completing onboarding:', error);
+    console.error("Error completing onboarding:", error);
     return NextResponse.json(
-      { error: 'Failed to complete onboarding' },
-      { status: 500 }
+      { error: "Failed to complete onboarding" },
+      { status: 500 },
     );
   }
 }

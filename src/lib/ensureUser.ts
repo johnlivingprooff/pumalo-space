@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import prisma from "@/lib/prisma";
 
 export async function ensureUserInDatabase(stackUser: {
   id: string;
@@ -22,7 +22,7 @@ export async function ensureUserInDatabase(stackUser: {
       data: {
         id: stackUser.id,
         email: stackUser.primaryEmail || `${stackUser.id}@placeholder.local`,
-        name: stackUser.displayName || 'User',
+        name: stackUser.displayName || "User",
         avatar: stackUser.profileImageUrl,
         verified: false,
         isHost: false,
@@ -34,10 +34,10 @@ export async function ensureUserInDatabase(stackUser: {
       },
     });
 
-    console.log('Created new user in database:', newUser.id);
+    console.log("Created new user in database:", newUser.id);
     return newUser;
   } catch (error) {
-    console.error('Error ensuring user in database:', error);
+    console.error("Error ensuring user in database:", error);
     return null;
   }
 }

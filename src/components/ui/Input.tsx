@@ -1,6 +1,7 @@
-import React from 'react';
+import React from "react";
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   hint?: string;
@@ -18,26 +19,32 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       leftIcon,
       rightIcon,
       fullWidth = false,
-      className = '',
+      className = "",
       id,
       ...props
     },
-    ref
+    ref,
   ) => {
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
     const hasError = !!error;
-    
-    const baseStyles = 'block px-4 py-2 text-base border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 bg-white text-gray-600 placeholder:text-gray-400';
-    const normalStyles = 'border-gray-300 focus:border-primary-500 focus:ring-primary-500';
-    const errorStyles = 'border-red-500 focus:border-red-500 focus:ring-red-500';
-    const widthStyle = fullWidth ? 'w-full' : '';
-    const iconPaddingLeft = leftIcon ? 'pl-10' : '';
-    const iconPaddingRight = rightIcon ? 'pr-10' : '';
-    
+
+    const baseStyles =
+      "block px-4 py-2 text-base border rounded-lg focus:outline-none focus:ring-2 transition-colors duration-200 bg-white text-gray-600 placeholder:text-gray-400";
+    const normalStyles =
+      "border-gray-300 focus:border-primary-500 focus:ring-primary-500";
+    const errorStyles =
+      "border-red-500 focus:border-red-500 focus:ring-red-500";
+    const widthStyle = fullWidth ? "w-full" : "";
+    const iconPaddingLeft = leftIcon ? "pl-10" : "";
+    const iconPaddingRight = rightIcon ? "pr-10" : "";
+
     return (
-      <div className={`${fullWidth ? 'w-full' : ''}`}>
+      <div className={`${fullWidth ? "w-full" : ""}`}>
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor={inputId}
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             {label}
           </label>
         )}
@@ -59,15 +66,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
         </div>
-        {hint && !error && (
-          <p className="mt-1 text-sm text-gray-500">{hint}</p>
-        )}
-        {error && (
-          <p className="mt-1 text-sm text-red-600">{error}</p>
-        )}
+        {hint && !error && <p className="mt-1 text-sm text-gray-500">{hint}</p>}
+        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";

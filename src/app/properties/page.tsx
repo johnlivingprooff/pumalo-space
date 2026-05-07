@@ -1,13 +1,13 @@
 // Force dynamic rendering for this page
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import React from 'react';
-import { PropertyCard } from '@/components/properties/PropertyCard';
-import prisma from '@/lib/prisma';
-import { PropertyType } from '@prisma/client';
-import { FiltersBar } from '@/components/properties/FiltersBar';
-import { stackServerApp } from '@stack/server';
+import React from "react";
+import { PropertyCard } from "@/components/properties/PropertyCard";
+import prisma from "@/lib/prisma";
+import { PropertyType } from "@prisma/client";
+import { FiltersBar } from "@/components/properties/FiltersBar";
+import { stackServerApp } from "@stack/server";
 
 interface SearchParams {
   type?: string;
@@ -21,20 +21,20 @@ interface SearchParams {
 async function getProperties(searchParams: SearchParams) {
   try {
     const where: any = {};
-    
+
     // Filter by property type
     if (searchParams.type) {
       where.propertyType = searchParams.type.toUpperCase() as PropertyType;
     }
-    
+
     // Filter by city
     if (searchParams.city) {
       where.city = {
         contains: searchParams.city,
-        mode: 'insensitive',
+        mode: "insensitive",
       };
     }
-    
+
     // Filter by price range
     if (searchParams.minPrice || searchParams.maxPrice) {
       where.price = {};
@@ -45,21 +45,21 @@ async function getProperties(searchParams: SearchParams) {
         where.price.lte = parseFloat(searchParams.maxPrice);
       }
     }
-    
+
     // Filter by bedrooms
     if (searchParams.bedrooms) {
       where.bedrooms = {
         gte: parseInt(searchParams.bedrooms),
       };
     }
-    
+
     // Filter by bathrooms
     if (searchParams.bathrooms) {
       where.bathrooms = {
         gte: parseInt(searchParams.bathrooms),
       };
     }
-    
+
     const properties = await prisma.property.findMany({
       where,
       include: {
@@ -73,13 +73,13 @@ async function getProperties(searchParams: SearchParams) {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
-    
+
     return properties;
   } catch (error) {
-    console.error('Error fetching properties:', error);
+    console.error("Error fetching properties:", error);
     return [];
   }
 }
@@ -90,7 +90,7 @@ async function getUserFavorites(userId: string) {
       where: { userId },
       select: { propertyId: true },
     });
-    return new Set(favorites.map(f => f.propertyId));
+    return new Set(favorites.map((f) => f.propertyId));
   } catch (error) {
     return new Set<string>();
   }
@@ -103,18 +103,20 @@ export default async function PropertiesPage({
 }) {
   const params = await searchParams;
   const properties = await getProperties(params);
-  
+
   // Get current user and their favorites
   const user = await stackServerApp.getUser();
-  const favoriteIds = user ? await getUserFavorites(user.id) : new Set<string>();
-  
+  const favoriteIds = user
+    ? await getUserFavorites(user.id)
+    : new Set<string>();
+
   // Get unique cities for filter
   const allProperties = await prisma.property.findMany({
     select: { city: true },
-    distinct: ['city'],
+    distinct: ["city"],
   });
-  const cities = allProperties.map(p => p.city);
-  
+  const cities = allProperties.map((p) => p.city);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -123,11 +125,11 @@ export default async function PropertiesPage({
           <h1 className="text-3xl font-bold text-gray-900">
             {params.type
               ? `Properties for ${params.type.charAt(0).toUpperCase() + params.type.slice(1)}`
-              : 'All Properties'
-            }
+              : "All Properties"}
           </h1>
           <p className="mt-2 text-gray-600">
-            {properties.length} {properties.length === 1 ? 'property' : 'properties'} found
+            {properties.length}{" "}
+            {properties.length === 1 ? "property" : "properties"} found
           </p>
         </div>
       </div>
@@ -164,10 +166,18 @@ export default async function PropertiesPage({
                     price={property.price}
                     currency={property.currency}
                     pricePerPeriod={property.pricePeriod || undefined}
-                    image={property.images[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80'}
+                    image={
+                      property.images[0] ||
+                      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80"
+                    }
                     rating={property.rating}
                     reviewCount={property.reviewCount}
-                    propertyType={property.propertyType.toLowerCase() as 'rent' | 'buy' | 'lodge'}
+                    propertyType={
+                      property.propertyType.toLowerCase() as
+                        | "rent"
+                        | "buy"
+                        | "lodge"
+                    }
                     initialIsFavorite={favoriteIds.has(property.id)}
                   />
                 ))}
@@ -187,8 +197,12 @@ export default async function PropertiesPage({
                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                   />
                 </svg>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No properties found</h3>
-                <p className="text-gray-600 mb-4">Try adjusting your filters to see more results</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No properties found
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Try adjusting your filters to see more results
+                </p>
                 <a
                   href="/properties"
                   className="inline-block px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"

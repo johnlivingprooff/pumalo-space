@@ -1,14 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { stackServerApp } from '@stack/server';
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { stackServerApp } from "@stack/server";
 
 export async function POST(request: NextRequest) {
   try {
     const user = await stackServerApp.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { propertyId } = await request.json();
-    if (!propertyId) return NextResponse.json({ error: 'propertyId required' }, { status: 400 });
+    if (!propertyId)
+      return NextResponse.json(
+        { error: "propertyId required" },
+        { status: 400 },
+      );
 
     await prisma.favorite.create({
       data: {
@@ -27,11 +32,16 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const user = await stackServerApp.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { searchParams } = new URL(request.url);
-    const propertyId = searchParams.get('propertyId');
-    if (!propertyId) return NextResponse.json({ error: 'propertyId required' }, { status: 400 });
+    const propertyId = searchParams.get("propertyId");
+    if (!propertyId)
+      return NextResponse.json(
+        { error: "propertyId required" },
+        { status: 400 },
+      );
 
     await prisma.favorite.delete({
       where: {
@@ -44,6 +54,9 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update favorites' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update favorites" },
+      { status: 500 },
+    );
   }
 }

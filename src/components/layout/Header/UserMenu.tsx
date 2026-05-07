@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import Link from 'next/link';
-import { useUser } from '@stackframe/stack';
-import { Button } from '@/components/ui/Button';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
+import Link from "next/link";
+import { useUser } from "@stackframe/stack";
+import { Button } from "@/components/ui/Button";
 
 export const UserMenu: React.FC = () => {
   const user = useUser();
@@ -17,22 +23,25 @@ export const UserMenu: React.FC = () => {
     if (!isDropdownOpen) return;
 
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setIsDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isDropdownOpen]);
 
@@ -50,7 +59,7 @@ export const UserMenu: React.FC = () => {
       // Check if we already have the status in session storage
       const cachedStatus = sessionStorage.getItem(`host-status-${user.id}`);
       if (cachedStatus !== null) {
-        setIsHost(cachedStatus === 'true');
+        setIsHost(cachedStatus === "true");
         return;
       }
 
@@ -67,7 +76,7 @@ export const UserMenu: React.FC = () => {
 
   // Memoize toggle function
   const toggleDropdown = useCallback(() => {
-    setIsDropdownOpen(prev => !prev);
+    setIsDropdownOpen((prev) => !prev);
   }, []);
 
   // Memoize sign out handler
@@ -77,7 +86,7 @@ export const UserMenu: React.FC = () => {
       sessionStorage.clear(); // Clear cached data
     }
   }, [user]);
-  
+
   if (!user) {
     return (
       <div className="flex items-center gap-3">
@@ -94,16 +103,16 @@ export const UserMenu: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
         className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
       >
-        <img 
+        <img
           src={avatarUrl}
-          alt={user.displayName || 'User'} 
+          alt={user.displayName || "User"}
           className="w-8 h-8 rounded-full object-cover"
           onError={() => setImageError(true)}
           referrerPolicy="no-referrer"
@@ -111,23 +120,30 @@ export const UserMenu: React.FC = () => {
         />
         <svg
           className={`w-4 h-4 text-gray-600 transition-transform ${
-            isDropdownOpen ? 'rotate-180' : ''
+            isDropdownOpen ? "rotate-180" : ""
           }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </button>
-      
+
       {isDropdownOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
           <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-sm font-medium text-gray-900">{user.displayName || 'User'}</p>
+            <p className="text-sm font-medium text-gray-900">
+              {user.displayName || "User"}
+            </p>
             <p className="text-xs text-gray-500">{user.primaryEmail}</p>
           </div>
-          
+
           <Link
             href="/profile"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -149,19 +165,19 @@ export const UserMenu: React.FC = () => {
           >
             My Bookings
           </Link>
-          
+
           <div className="border-t border-gray-200 my-2" />
-          
+
           <Link
-            href={isHost ? '/host/listings' : '/host/onboarding'}
+            href={isHost ? "/host/listings" : "/host/onboarding"}
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             onClick={() => setIsDropdownOpen(false)}
           >
-            {isHost ? 'My Listings' : 'Become a Host'}
+            {isHost ? "My Listings" : "Become a Host"}
           </Link>
-          
+
           <div className="border-t border-gray-200 my-2" />
-          
+
           <button
             onClick={handleSignOut}
             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"

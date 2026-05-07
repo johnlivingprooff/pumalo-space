@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { stackServerApp } from '@stack/server';
-import { ensureUserInDatabase } from '@/lib/ensureUser';
+import { NextRequest, NextResponse } from "next/server";
+import { stackServerApp } from "@stack/server";
+import { ensureUserInDatabase } from "@/lib/ensureUser";
 
 export async function POST(request: NextRequest) {
   try {
     const stackUser = await stackServerApp.getUser();
     if (!stackUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await ensureUserInDatabase({
@@ -18,8 +18,8 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Failed to create profile' },
-        { status: 500 }
+        { error: "Failed to create profile" },
+        { status: 500 },
       );
     }
 
@@ -28,10 +28,10 @@ export async function POST(request: NextRequest) {
       user,
     });
   } catch (error) {
-    console.error('Error creating profile:', error);
+    console.error("Error creating profile:", error);
     return NextResponse.json(
-      { error: 'Failed to create profile' },
-      { status: 500 }
+      { error: "Failed to create profile" },
+      { status: 500 },
     );
   }
 }
