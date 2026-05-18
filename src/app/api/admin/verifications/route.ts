@@ -14,7 +14,6 @@ export async function GET() {
     select: {
       id: true, verificationStatus: true, createdAt: true,
       user: { select: { id: true, name: true, email: true, avatar: true } },
-      _count: false,
     },
     orderBy: { createdAt: "asc" },
   });
