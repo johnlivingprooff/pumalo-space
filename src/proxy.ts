@@ -1,3 +1,4 @@
+import { stackServerApp } from "@stack/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -78,8 +79,47 @@ setInterval(
   5 * 60 * 1000,
 );
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Admin route protection
+  if (pathname.startsWith("/admin")) {
+    try {
+      const user = await stackServerApp.getUser();
+      if (!user) {
+        const url = new URL("/sign-in", request.url);
+        url.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(url);
+      }
+      const { default: prisma } = await import("@/lib/prisma");
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { isAdmin: true },
+      });
+      if (!dbUser?.isAdmin) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    } catch {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+  }
+
+  // Auth-protected routes
+  const protectedRoutes = ["/list-property", "/my-listings", "/favourites", "/profile", "/host", "/manage-listings"];
+  if (protectedRoutes.some((r) => pathname.startsWith(r))) {
+    try {
+      const user = await stackServerApp.getUser();
+      if (!user) {
+        const url = new URL("/sign-in", request.url);
+        url.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(url);
+      }
+    } catch {
+      const url = new URL("/sign-in", request.url);
+      url.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(url);
+    }
+  }
 
   // Apply security headers to all responses
   const response = NextResponse.next();
