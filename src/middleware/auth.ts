@@ -1,8 +1,8 @@
 import { stackServerApp } from "@stack/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import prisma from "@/lib/prisma";
 
-// Protected routes that require authentication
 const protectedRoutes = [
   "/list-property",
   "/my-listings",
@@ -15,31 +15,44 @@ const protectedRoutes = [
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Check if the route is protected
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
-
-  if (isProtectedRoute) {
+  // Admin route protection
+  if (pathname.startsWith("/admin")) {
     try {
-      // Validate user authentication
       const user = await stackServerApp.getUser();
-
       if (!user) {
-        // Redirect to sign-in with original destination as query param
-        const redirectUrl = new URL("/sign-in", request.url);
-        redirectUrl.searchParams.set("redirect", pathname);
-        return NextResponse.redirect(redirectUrl);
+        const url = new URL("/sign-in", request.url);
+        url.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(url);
       }
-    } catch (error) {
-      // If auth check fails, redirect to sign-in
-      const redirectUrl = new URL("/sign-in", request.url);
-      redirectUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(redirectUrl);
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { isAdmin: true },
+      });
+      if (!dbUser?.isAdmin) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    } catch {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
     }
   }
 
-  // Continue with the request
+  // Standard auth-protected routes
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
+  if (isProtectedRoute) {
+    try {
+      const user = await stackServerApp.getUser();
+      if (!user) {
+        const url = new URL("/sign-in", request.url);
+        url.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(url);
+      }
+    } catch {
+      const url = new URL("/sign-in", request.url);
+      url.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(url);
+    }
+  }
+
   return NextResponse.next();
 }
 

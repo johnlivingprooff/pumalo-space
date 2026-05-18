@@ -244,7 +244,7 @@ export default async function HomePage() {
             Join thousands of hosts and start earning today
           </p>
           <Link href="/host/create-listing">
-            <Button variant="secondary" size="lg">
+            <Button variant="secondary" className="cursor:pointer" size="lg">
               Become a Host
             </Button>
           </Link>
