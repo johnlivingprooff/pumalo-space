@@ -32,9 +32,9 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Navigation - Centered - Desktop */}
-          <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2">
+          {/* <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2">
             <Navigation />
-          </div>
+          </div> */}
 
           {/* User Menu - Desktop */}
           <div className="hidden md:flex flex-shrink-0">
@@ -86,7 +86,7 @@ export const Header: React.FC = () => {
         <div className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-4 space-y-4">
             {/* Navigation - Mobile */}
-            <nav className="flex flex-col gap-2">
+            {/* <nav className="flex flex-col gap-2">
               <a
                 href="/rent"
                 className="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
@@ -105,7 +105,7 @@ export const Header: React.FC = () => {
               >
                 Lodge
               </a>
-            </nav>
+            </nav> */}
 
             {/* User Menu - Mobile */}
             <div className="pt-4 border-t border-gray-200">
