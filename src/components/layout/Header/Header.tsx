@@ -2,12 +2,10 @@
 
 import React, { useState, Suspense } from "react";
 import { Logo } from "./Logo";
-import { Navigation } from "./Navigation";
 import { UserMenu } from "./UserMenu";
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -36,92 +34,19 @@ export const Header: React.FC = () => {
             <Navigation />
           </div> */}
 
-          {/* User Menu - Desktop */}
-          <div className="hidden md:flex flex-shrink-0">
+          {/* User Menu */}
+          <div className="flex-shrink-0">
             <Suspense
               fallback={
-                <div className="flex items-center gap-2">
-                  <div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse" />
-                </div>
+                <div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse" />
               }
             >
               <UserMenu />
             </Suspense>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {isMobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-4 space-y-4">
-            {/* Navigation - Mobile */}
-            {/* <nav className="flex flex-col gap-2">
-              <a
-                href="/rent"
-                className="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
-              >
-                Rent
-              </a>
-              <a
-                href="/buy"
-                className="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
-              >
-                Buy
-              </a>
-              <a
-                href="/lodge"
-                className="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
-              >
-                Lodge
-              </a>
-            </nav> */}
-
-            {/* User Menu - Mobile */}
-            <div className="pt-4 border-t border-gray-200">
-              <Suspense
-                fallback={
-                  <div className="flex items-center gap-2">
-                    <div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse" />
-                  </div>
-                }
-              >
-                <UserMenu />
-              </Suspense>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 };
