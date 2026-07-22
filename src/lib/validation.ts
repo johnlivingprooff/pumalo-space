@@ -41,7 +41,7 @@ export function isValidUrl(url: string): boolean {
 // Validate positive number
 export function isValidPositiveNumber(value: any): boolean {
   const num = Number(value);
-  return !isNaN(num) && num > 0 && isFinite(num);
+  return !Number.isNaN(num) && num > 0 && Number.isFinite(num);
 }
 
 // Validate integer
@@ -179,7 +179,7 @@ export function validateBookingData(data: any): {
   const checkOut = new Date(data.checkOut);
   const now = new Date();
 
-  if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+  if (Number.isNaN(checkIn.getTime()) || Number.isNaN(checkOut.getTime())) {
     errors.push("Invalid date format");
   } else {
     if (checkIn < now) {

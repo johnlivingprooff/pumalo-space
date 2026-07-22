@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  CheckIcon,
+  RefreshIcon,
+  ShieldIcon,
+  VerificationsIcon,
+  XIcon,
+} from "../_icons";
 
 interface Verification {
   id: string;
@@ -18,7 +25,10 @@ export default function AdminVerificationsPage() {
   useEffect(() => {
     fetch("/api/admin/verifications")
       .then((r) => r.json())
-      .then((data) => { setItems(data); setLoading(false); });
+      .then((data) => {
+        setItems(data);
+        setLoading(false);
+      });
   }, []);
 
   const act = async (id: string, action: string) => {
@@ -32,42 +42,84 @@ export default function AdminVerificationsPage() {
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Host Verifications</h2>
-      <p className="text-sm text-gray-500 mb-6">Showing hosts with status: Under Review</p>
+      <div className="flex items-center gap-3 mb-6">
+        <VerificationsIcon className="w-6 h-6 text-primary-500" />
+        <h2 className="text-2xl font-bold text-gray-900">Host Verifications</h2>
+      </div>
+      <p className="text-sm text-gray-500 mb-6">
+        Showing hosts with status: Under Review
+      </p>
 
       {loading ? (
-        <p className="text-gray-500">Loading…</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="bg-white/40 backdrop-blur-lg border border-white/20 rounded-xl p-5 animate-pulse"
+            >
+              <div className="h-4 bg-gray-200/60 rounded w-48 mb-2" />
+              <div className="h-3 bg-gray-200/40 rounded w-64" />
+            </div>
+          ))}
+        </div>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-500">
-          No pending verifications 🎉
+        <div className="flex flex-col items-center justify-center py-16 bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl text-gray-400">
+          <ShieldIcon className="w-16 h-16 mb-4 opacity-30" />
+          <p className="text-sm">No pending verifications.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {items.map((v) => (
-            <div key={v.id} className="bg-white rounded-xl border border-gray-200 p-5">
+            <div
+              key={v.id}
+              className="bg-white/50 backdrop-blur-xl border border-white/30 rounded-xl p-5 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)]"
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="font-medium text-gray-900">{v.user.name}</p>
-                  <p className="text-sm text-gray-500">{v.user.email}</p>
-                  <p className="text-xs text-gray-400 mt-1">{v.docCount} document(s) uploaded · Submitted {new Date(v.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-500 mt-0.5">{v.user.email}</p>
+                  <p className="text-xs text-gray-400 mt-1.5">
+                    {v.docCount} document(s) uploaded &#183; Submitted{" "}
+                    {new Date(v.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs shrink-0">Under Review</span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50/70 backdrop-blur-sm text-amber-700 rounded-lg text-xs font-medium border border-amber-200/30 shrink-0">
+                  <RefreshIcon className="w-3 h-3" />
+                  Under Review
+                </span>
               </div>
 
               <div className="mt-4 flex flex-col sm:flex-row gap-2">
                 <input
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 bg-white/50 backdrop-blur-lg border border-white/30 rounded-lg px-3 py-1.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary-400/50 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
                   placeholder="Rejection reason (optional)"
                   value={reason[v.id] ?? ""}
-                  onChange={(e) => setReason((r) => ({ ...r, [v.id]: e.target.value }))}
+                  onChange={(e) =>
+                    setReason((r) => ({ ...r, [v.id]: e.target.value }))
+                  }
                 />
-                <button onClick={() => act(v.id, "approve")} className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">
+                <button
+                  type="button"
+                  onClick={() => act(v.id, "approve")}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/80 backdrop-blur-lg text-white text-sm rounded-lg hover:bg-emerald-500/90 transition-all duration-200"
+                >
+                  <CheckIcon className="w-4 h-4" />
                   Approve
                 </button>
-                <button onClick={() => act(v.id, "needs_resubmission")} className="px-3 py-1.5 bg-yellow-500 text-white text-sm rounded-lg hover:bg-yellow-600">
+                <button
+                  type="button"
+                  onClick={() => act(v.id, "needs_resubmission")}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/80 backdrop-blur-lg text-white text-sm rounded-lg hover:bg-amber-500/90 transition-all duration-200"
+                >
+                  <RefreshIcon className="w-4 h-4" />
                   Needs Resubmission
                 </button>
-                <button onClick={() => act(v.id, "reject")} className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700">
+                <button
+                  type="button"
+                  onClick={() => act(v.id, "reject")}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/80 backdrop-blur-lg text-white text-sm rounded-lg hover:bg-red-500/90 transition-all duration-200"
+                >
+                  <XIcon className="w-4 h-4" />
                   Reject
                 </button>
               </div>

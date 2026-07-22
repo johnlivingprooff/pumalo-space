@@ -8,7 +8,7 @@ export function GlobalLoading() {
   useEffect(() => {
     // This will handle the loading state during navigation
     const handleStart = () => setIsLoading(true);
-    const handleEnd = () => setIsLoading(false);
+    const _handleEnd = () => setIsLoading(false);
 
     // Listen for navigation events
     window.addEventListener("beforeunload", handleStart);

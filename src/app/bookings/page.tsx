@@ -1,11 +1,10 @@
-import React from "react";
-import { redirect } from "next/navigation";
 import { stackServerApp } from "@stack/server";
-import { Badge } from "@/components/ui/Badge";
-import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { CancelBookingButton } from "@/components/bookings/CancelBookingButton";
+import { Badge } from "@/components/ui/Badge";
 import { ensureUserInDatabase } from "@/lib/ensureUser";
+import prisma from "@/lib/prisma";
 
 async function getUserBookings(userId: string) {
   try {

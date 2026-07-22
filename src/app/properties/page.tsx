@@ -2,12 +2,11 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import React from "react";
+import type { PropertyType } from "@prisma/client";
+import { stackServerApp } from "@stack/server";
+import { FiltersBar } from "@/components/properties/FiltersBar";
 import { PropertyCard } from "@/components/properties/PropertyCard";
 import prisma from "@/lib/prisma";
-import { PropertyType } from "@prisma/client";
-import { FiltersBar } from "@/components/properties/FiltersBar";
-import { stackServerApp } from "@stack/server";
 
 interface SearchParams {
   type?: string;
@@ -49,14 +48,14 @@ async function getProperties(searchParams: SearchParams) {
     // Filter by bedrooms
     if (searchParams.bedrooms) {
       where.bedrooms = {
-        gte: parseInt(searchParams.bedrooms),
+        gte: parseInt(searchParams.bedrooms, 10),
       };
     }
 
     // Filter by bathrooms
     if (searchParams.bathrooms) {
       where.bathrooms = {
-        gte: parseInt(searchParams.bathrooms),
+        gte: parseInt(searchParams.bathrooms, 10),
       };
     }
 
@@ -91,7 +90,7 @@ async function getUserFavorites(userId: string) {
       select: { propertyId: true },
     });
     return new Set(favorites.map((f) => f.propertyId));
-  } catch (error) {
+  } catch (_error) {
     return new Set<string>();
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function RemoveFavoriteButton({ propertyId }: { propertyId: string }) {
   const router = useRouter();

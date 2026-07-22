@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { stackServerApp } from "@stack/server";
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 // GET — fetch current verification status
 export async function GET() {
@@ -18,7 +18,10 @@ export async function GET() {
   });
 
   if (!profile)
-    return NextResponse.json({ error: "Host profile not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Host profile not found" },
+      { status: 404 },
+    );
 
   const docCount = await prisma.verificationDocument.count({
     where: { userId: stackUser.id },
@@ -39,7 +42,10 @@ export async function PATCH() {
   });
 
   if (!profile)
-    return NextResponse.json({ error: "Host profile not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Host profile not found" },
+      { status: 404 },
+    );
 
   // Only allow submission from PENDING or NEEDS_RESUBMISSION
   const submittable = ["PENDING", "NEEDS_RESUBMISSION"];

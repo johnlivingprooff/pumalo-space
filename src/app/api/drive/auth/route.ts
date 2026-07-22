@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import { stackServerApp } from "@stack/server";
+import { NextResponse } from "next/server";
+import { ensureUserInDatabase } from "@/lib/ensureUser";
 import { getAuthUrl, revokeAccess } from "@/lib/google-drive";
 import { prisma } from "@/lib/prisma";
-import { ensureUserInDatabase } from "@/lib/ensureUser";
 
 export async function GET() {
   const stackUser = await stackServerApp.getUser();

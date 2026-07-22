@@ -1,11 +1,14 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminGuard";
+import prisma from "@/lib/prisma";
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { error } = await requireAdmin();
   if (error) return error;
 
@@ -22,11 +25,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "No valid fields" }, { status: 400 });
   }
 
-  const user = await prisma.user.update({ where: { id }, data, select: { id: true, isBanned: true, isHost: true, isAdmin: true } });
+  const user = await prisma.user.update({
+    where: { id },
+    data,
+    select: { id: true, isBanned: true, isHost: true, isAdmin: true },
+  });
   return NextResponse.json(user);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { error } = await requireAdmin();
   if (error) return error;
 

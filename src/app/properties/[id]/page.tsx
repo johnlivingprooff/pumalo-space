@@ -1,11 +1,10 @@
-import React from "react";
-import { notFound } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
-import prisma from "@/lib/prisma";
-import { Badge } from "@/components/ui/Badge";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { PropertyCTA } from "@/components/properties/PropertyCTA";
+import { Badge } from "@/components/ui/Badge";
 import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
+import prisma from "@/lib/prisma";
 
 async function getProperty(id: string) {
   // Validate that id is provided and not empty
@@ -390,9 +389,8 @@ export default async function PropertyDetailPage({
                       <p className="font-semibold text-gray-900">
                         {property.host.name}
                       </p>
-                      {property.host.hostProfile?.verificationStatus === "VERIFIED" && (
-                        <VerifiedBadge size="sm" />
-                      )}
+                      {property.host.hostProfile?.verificationStatus ===
+                        "VERIFIED" && <VerifiedBadge size="sm" />}
                     </div>
                     <p className="text-sm text-gray-600">
                       Joined {new Date(property.host.createdAt).getFullYear()}
@@ -413,7 +411,9 @@ export default async function PropertyDetailPage({
                     avatar: property.host.avatar,
                     email: property.host.email,
                     phone: property.host.phone,
-                    isVerified: property.host.hostProfile?.verificationStatus === "VERIFIED",
+                    isVerified:
+                      property.host.hostProfile?.verificationStatus ===
+                      "VERIFIED",
                   }}
                 />
                 <button className="w-full flex items-center justify-center gap-2 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">

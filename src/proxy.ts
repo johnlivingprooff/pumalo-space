@@ -1,6 +1,6 @@
 import { stackServerApp } from "@stack/server";
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 // Rate limiting store (in production, use Redis or similar)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
@@ -105,7 +105,14 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Auth-protected routes
-  const protectedRoutes = ["/list-property", "/my-listings", "/favourites", "/profile", "/host", "/manage-listings"];
+  const protectedRoutes = [
+    "/list-property",
+    "/my-listings",
+    "/favourites",
+    "/profile",
+    "/host",
+    "/manage-listings",
+  ];
   if (protectedRoutes.some((r) => pathname.startsWith(r))) {
     try {
       const user = await stackServerApp.getUser();

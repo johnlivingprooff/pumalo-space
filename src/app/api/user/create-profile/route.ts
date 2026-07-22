@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { stackServerApp } from "@stack/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { ensureUserInDatabase } from "@/lib/ensureUser";
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const stackUser = await stackServerApp.getUser();
     if (!stackUser) {

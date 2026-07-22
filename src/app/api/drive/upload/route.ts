@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { VerificationType } from "@prisma/client";
 import { stackServerApp } from "@stack/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { ensureUserInDatabase } from "@/lib/ensureUser";
 import {
   getAccessToken,
-  uploadFileToDrive,
   getFileMetadata,
+  uploadFileToDrive,
 } from "@/lib/google-drive";
 import { prisma } from "@/lib/prisma";
-import { ensureUserInDatabase } from "@/lib/ensureUser";
-import type { VerificationType } from "@prisma/client";
 
 const ALLOWED_TYPES = [
   "application/pdf",

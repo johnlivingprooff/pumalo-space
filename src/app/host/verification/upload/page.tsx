@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
 import { stackServerApp } from "@stack/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import DriveUploader from "@/components/host/DriveUploader";
 
 export default async function VerificationUploadPage() {
@@ -14,8 +14,18 @@ export default async function VerificationUploadPage() {
           href="/host/verification"
           className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-6"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           Back to verification
         </Link>

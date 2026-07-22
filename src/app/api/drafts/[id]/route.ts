@@ -1,7 +1,7 @@
-import { type NextRequest, NextResponse } from "next/server";
 import { stackServerApp } from "@stack/server";
-import { prisma } from "@/lib/prisma";
+import { type NextRequest, NextResponse } from "next/server";
 import { ensureUserInDatabase } from "@/lib/ensureUser";
+import { prisma } from "@/lib/prisma";
 
 async function getUser() {
   const stackUser = await stackServerApp.getUser();

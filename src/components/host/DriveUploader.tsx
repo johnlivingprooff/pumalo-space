@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 
 type VerificationType = "id" | "title_deed" | "other";
 
@@ -22,14 +22,14 @@ export default function DriveUploader() {
   const [verificationType, setVerificationType] =
     useState<VerificationType>("id");
 
-  const checkConnection = async () => {
+  const _checkConnection = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/drive/auth");
       const data = await res.json();
       setConnected(data.connected);
       if (data.connected) fetchDocuments();
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to check connection");
     } finally {
       setLoading(false);
@@ -42,7 +42,7 @@ export default function DriveUploader() {
       const res = await fetch("/api/drive/auth");
       const data = await res.json();
       window.location.href = data.authUrl;
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to connect");
       setLoading(false);
     }
@@ -54,7 +54,7 @@ export default function DriveUploader() {
       await fetch("/api/drive/auth", { method: "DELETE" });
       setConnected(false);
       setDocuments([]);
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to disconnect");
     } finally {
       setLoading(false);
@@ -66,7 +66,7 @@ export default function DriveUploader() {
       const res = await fetch("/api/drive/documents");
       const data = await res.json();
       setDocuments(data.documents || []);
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to fetch documents");
     }
   };

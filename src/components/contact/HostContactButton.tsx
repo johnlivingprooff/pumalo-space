@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { useState } from "react";
 import { ContactHostModal } from "@/components/contact/ContactHostModal";
+import { Button } from "@/components/ui/Button";
 
 interface HostContactButtonProps {
   host: {

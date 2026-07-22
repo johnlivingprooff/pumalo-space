@@ -1,11 +1,10 @@
-import React from "react";
-import { PropertyCard } from "@/components/properties/PropertyCard";
-import { Button } from "@/components/ui/Button";
-import { HeroSection } from "@/components/HeroSection";
-import Link from "next/link";
-import prisma from "@/lib/prisma";
 import { stackServerApp } from "@stack/server";
 import Image from "next/image";
+import Link from "next/link";
+import { HeroSection } from "@/components/HeroSection";
+import { PropertyCard } from "@/components/properties/PropertyCard";
+import { Button } from "@/components/ui/Button";
+import prisma from "@/lib/prisma";
 
 async function getFeaturedProperties() {
   try {
@@ -41,7 +40,7 @@ async function getUserFavorites(userId: string) {
       select: { propertyId: true },
     });
     return new Set(favorites.map((f) => f.propertyId));
-  } catch (error) {
+  } catch (_error) {
     return new Set<string>();
   }
 }

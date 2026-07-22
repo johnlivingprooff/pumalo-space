@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useUser } from "@stackframe/stack";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface DriveGuardProps {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export function DriveGuard({
 }: DriveGuardProps) {
   const router = useRouter();
   const user = useUser();
-  const [hasDriveAccess, setHasDriveAccess] = useState<boolean | null>(null);
+  const [_hasDriveAccess, setHasDriveAccess] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 
 export interface ContactHostModalProps {
@@ -26,8 +26,7 @@ export function ContactHostModal({
   const [copied, setCopied] = useState<"email" | "phone" | null>(null);
 
   const whatsappNumber = host.phone?.replace(/\D/g, "");
-  const whatsappMessage =
-    "Hi, I'm interested in your property: " + propertyTitle;
+  const whatsappMessage = `Hi, I'm interested in your property: ${propertyTitle}`;
   const whatsappLink = whatsappNumber
     ? "https://wa.me/" +
       whatsappNumber +
@@ -38,7 +37,7 @@ export function ContactHostModal({
     ? "mailto:" +
       host.email +
       "?subject=" +
-      encodeURIComponent("Inquiry: " + propertyTitle) +
+      encodeURIComponent(`Inquiry: ${propertyTitle}`) +
       "&body=" +
       encodeURIComponent(
         "Hi " +
@@ -59,7 +58,7 @@ export function ContactHostModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={"Contact " + host.name}
+      title={`Contact ${host.name}`}
       size="md"
     >
       <div className="space-y-6">

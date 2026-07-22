@@ -1,11 +1,14 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminGuard";
+import prisma from "@/lib/prisma";
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { error } = await requireAdmin();
   if (error) return error;
 
@@ -19,7 +22,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   };
 
   const status = statusMap[action];
-  if (!status) return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  if (!status)
+    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
 
   const profile = await prisma.hostProfile.update({
     where: { id },
@@ -33,7 +37,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // If approved, mark user as verified
   if (action === "approve") {
-    await prisma.user.update({ where: { id: profile.userId }, data: { verified: true } });
+    await prisma.user.update({
+      where: { id: profile.userId },
+      data: { verified: true },
+    });
   }
 
   return NextResponse.json(profile);

@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import { stackServerApp } from "@stack/server";
+import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { VerificationClient } from "./VerificationClient";
 

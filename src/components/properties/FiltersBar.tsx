@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React from "react";
 
 export type FiltersBarProps = {
   cities: string[];
@@ -111,7 +111,7 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
       setParams({ minPrice: min, maxPrice: max });
     }, 300);
     return () => clearTimeout(handle);
-  }, [minSlider, maxSlider]);
+  }, [minSlider, maxSlider, setParams]);
 
   const handleMinChange = (val: number) => {
     const clamped = Math.max(PRICE_MIN, Math.min(val, maxSlider));

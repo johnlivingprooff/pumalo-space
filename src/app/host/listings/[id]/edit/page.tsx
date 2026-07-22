@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { ImageUpload } from "@/components/ui/ImageUpload";
 import { useUser } from "@stackframe/stack";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { Input } from "@/components/ui/Input";
 
 type PropertyType = "RENT" | "BUY" | "LODGE";
 
@@ -554,7 +554,7 @@ export default function EditListingPage() {
                       onChange={(e) =>
                         handleInputChange(
                           "bedrooms",
-                          parseInt(e.target.value) || 0,
+                          parseInt(e.target.value, 10) || 0,
                         )
                       }
                     />
@@ -589,7 +589,7 @@ export default function EditListingPage() {
                       onChange={(e) =>
                         handleInputChange(
                           "maxGuests",
-                          parseInt(e.target.value) || 1,
+                          parseInt(e.target.value, 10) || 1,
                         )
                       }
                     />

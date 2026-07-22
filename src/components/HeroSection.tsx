@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "./ui/Button";
-import { AnimatedSearchInput } from "./ui/AnimatedSearchInput";
 import { useRouter } from "next/navigation";
+import type React from "react";
+import { useState } from "react";
+import { AnimatedSearchInput } from "./ui/AnimatedSearchInput";
+import { Button } from "./ui/Button";
 
 export const HeroSection: React.FC = () => {
   const router = useRouter();

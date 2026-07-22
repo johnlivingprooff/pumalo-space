@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { Logo } from "./Logo";
 import { UserMenu } from "./UserMenu";
 
@@ -46,7 +46,6 @@ export const Header: React.FC = () => {
           </div>
         </div>
       </div>
-
     </header>
   );
 };

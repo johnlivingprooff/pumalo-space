@@ -1,11 +1,10 @@
-import React from "react";
-import { redirect } from "next/navigation";
 import { stackServerApp } from "@stack/server";
-import { Button } from "@/components/ui/Button";
-import { DeletePropertyButton } from "@/components/host/DeletePropertyButton";
-import prisma from "@/lib/prisma";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { DeletePropertyButton } from "@/components/host/DeletePropertyButton";
+import { Button } from "@/components/ui/Button";
+import prisma from "@/lib/prisma";
 
 interface PageParams {
   id: string;

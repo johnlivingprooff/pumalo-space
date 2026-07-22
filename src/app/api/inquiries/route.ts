@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { stackServerApp } from "@stack/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { ensureUserInDatabase } from "@/lib/ensureUser";
+import prisma from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,10 +17,20 @@ export async function POST(request: NextRequest) {
     });
 
     const body = await request.json();
-    const { propertyId, type, message, offerAmount, requestedDates, requestViewing } = body;
+    const {
+      propertyId,
+      type,
+      message,
+      offerAmount,
+      requestedDates,
+      requestViewing,
+    } = body;
 
     if (!propertyId || !type || !message?.trim()) {
-      return NextResponse.json({ error: "propertyId, type, and message are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "propertyId, type, and message are required" },
+        { status: 400 },
+      );
     }
 
     const property = await prisma.property.findUnique({
@@ -42,11 +52,17 @@ export async function POST(request: NextRequest) {
     });
 
     if (!property) {
-      return NextResponse.json({ error: "Property not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 },
+      );
     }
 
     if (property.hostId === stackUser.id) {
-      return NextResponse.json({ error: "Cannot inquire on your own property" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Cannot inquire on your own property" },
+        { status: 400 },
+      );
     }
 
     const inquiry = await prisma.inquiry.create({
@@ -72,6 +88,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error creating inquiry:", error);
-    return NextResponse.json({ error: "Failed to submit inquiry" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to submit inquiry" },
+      { status: 500 },
+    );
   }
 }

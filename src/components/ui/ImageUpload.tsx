@@ -1,8 +1,8 @@
 "use client";
 
-import { CldUploadWidget } from "next-cloudinary";
-import { useState, useEffect } from "react";
 import Image from "next/image";
+import { CldUploadWidget } from "next-cloudinary";
+import { useEffect, useState } from "react";
 
 interface ImageUploadProps {
   value?: string[];
@@ -37,7 +37,7 @@ export function ImageUpload({
 
   const handleUpload = (result: any) => {
     // Handle both single and batch uploads
-    if (result.info && result.info.secure_url) {
+    if (result.info?.secure_url) {
       const newUrl = result.info.secure_url;
       const updatedImages = [...uploadedImages, newUrl];
       setUploadedImages(updatedImages);

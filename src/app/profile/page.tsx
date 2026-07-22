@@ -1,11 +1,10 @@
-import React from "react";
-import { redirect } from "next/navigation";
-import Image from "next/image";
 import { stackServerApp } from "@stack/server";
-import { Button } from "@/components/ui/Button";
-import prisma from "@/lib/prisma";
-import { ensureUserInDatabase } from "@/lib/ensureUser";
+import Image from "next/image";
+import { redirect } from "next/navigation";
 import { CreateProfileButton } from "@/components/profile/CreateProfileButton";
+import { Button } from "@/components/ui/Button";
+import { ensureUserInDatabase } from "@/lib/ensureUser";
+import prisma from "@/lib/prisma";
 
 async function getUserProfile(stackUserId: string) {
   try {

@@ -13,15 +13,16 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen relative">
       {/* Background Image */}
-        <div className="absolute inset-0">
-          <div 
-            className="w-full h-full bg-cover bg-center"
-            style={{
-              backgroundImage: "url('https://images.unsplash.com/photo-1760801986203-2d755aaf7857?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074')",
-            }}
-          />
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
+      <div className="absolute inset-0">
+        <div
+          className="w-full h-full bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1760801986203-2d755aaf7857?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
       <div className="relative mx-auto max-w-6xl px-4 py-12 grid gap-10 lg:grid-cols-2 items-center min-h-screen">
         <div className="hidden lg:block text-white">
@@ -73,8 +74,18 @@ export default function AuthLayout({
                   stroke="currentColor"
                   aria-hidden="true"
                 >
-                  <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4Z"/>
-                  <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M19 21a7 7 0 1 0-14 0"/>
+                  <path
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4Z"
+                  />
+                  <path
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 21a7 7 0 1 0-14 0"
+                  />
                 </svg>
               </div>
               <h2 className="mt-4 text-2xl font-semibold text-gray-900">

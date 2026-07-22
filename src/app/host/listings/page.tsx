@@ -1,11 +1,10 @@
-import React from "react";
-import { redirect } from "next/navigation";
 import { stackServerApp } from "@stack/server";
-import { Button } from "@/components/ui/Button";
-import { PropertyCardWrapper } from "@/components/host/PropertyCardWrapper";
-import { EditPropertyLink } from "@/components/host/EditPropertyLink";
-import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { EditPropertyLink } from "@/components/host/EditPropertyLink";
+import { PropertyCardWrapper } from "@/components/host/PropertyCardWrapper";
+import { Button } from "@/components/ui/Button";
+import prisma from "@/lib/prisma";
 
 async function getHostProperties(hostId: string) {
   try {

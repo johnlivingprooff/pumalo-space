@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
 import { stackServerApp } from "@stack/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { ensureUserInDatabase } from "@/lib/ensureUser";
 import {
   getAccessToken,
-  uploadFileToDrive,
   makeFilePublic,
+  uploadFileToDrive,
 } from "@/lib/google-drive";
-import { ensureUserInDatabase } from "@/lib/ensureUser";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB

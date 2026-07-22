@@ -1,14 +1,9 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
-import Link from "next/link";
 import { useUser } from "@stackframe/stack";
+import Link from "next/link";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 
 export const UserMenu: React.FC = () => {

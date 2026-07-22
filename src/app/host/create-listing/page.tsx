@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { DriveImageUpload } from "@/components/ui/DriveImageUpload";
 import { useUser } from "@stackframe/stack";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { DriveImageUpload } from "@/components/ui/DriveImageUpload";
+import { Input } from "@/components/ui/Input";
 import { useDraft } from "@/hooks/useDraft";
 
 type PropertyType = "RENT" | "BUY" | "LODGE";
@@ -108,7 +108,7 @@ export default function CreateListingPage() {
   // Show resume prompt if there's a draft in the URL but no explicit load
   useEffect(() => {
     if (existingDraftId && !resumePrompt) setResumePrompt(true);
-  }, [existingDraftId]); // eslint-disable-line
+  }, [existingDraftId, resumePrompt]); // eslint-disable-line
 
   const handleInputChange = (field: keyof PropertyFormData, value: unknown) => {
     const updated = { ...formData, [field]: value };
@@ -464,7 +464,7 @@ export default function CreateListingPage() {
                     onChange={(e) =>
                       handleInputChange(
                         "bedrooms",
-                        parseInt(e.target.value) || 0,
+                        parseInt(e.target.value, 10) || 0,
                       )
                     }
                   />
@@ -497,7 +497,7 @@ export default function CreateListingPage() {
                     onChange={(e) =>
                       handleInputChange(
                         "maxGuests",
-                        parseInt(e.target.value) || 1,
+                        parseInt(e.target.value, 10) || 1,
                       )
                     }
                   />

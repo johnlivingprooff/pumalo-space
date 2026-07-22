@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { requireAdmin } from "@/lib/adminGuard";
+import prisma from "@/lib/prisma";
 
 export async function GET() {
   const { error } = await requireAdmin();
@@ -16,5 +16,10 @@ export async function GET() {
     prisma.review.count(),
   ]);
 
-  return NextResponse.json({ users, properties, pendingVerifications, reviews });
+  return NextResponse.json({
+    users,
+    properties,
+    pendingVerifications,
+    reviews,
+  });
 }

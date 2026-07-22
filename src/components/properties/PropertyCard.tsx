@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
 import Image from "next/image";
-import type { PropertyCardProps } from "@/types";
-import { Badge } from "@/components/ui/Badge";
+import Link from "next/link";
+import type React from "react";
 import { FavoriteButton } from "@/components/properties/FavoriteButton";
+import { Badge } from "@/components/ui/Badge";
+import type { PropertyCardProps } from "@/types";
 
 const fallbackImage =
   "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop&q=80";
