@@ -1,0 +1,34 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+import { type NextRequest, NextResponse } from "next/server";
+import { stackServerApp } from "@stack/server";
+import prisma from "@/lib/prisma";
+import { sanitizeUserProfile } from "@/lib/validation";
+
+export async function PATCH(req: NextRequest) {
+  const stackUser = await stackServerApp.getUser();
+  if (!stackUser) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await req.json();
+  const sanitized = sanitizeUserProfile(body);
+
+  const user = await prisma.user.update({
+    where: { id: stackUser.id },
+    data: sanitized,
+    select: {
+      id: true,
+      name: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+      bio: true,
+      avatar: true,
+    },
+  });
+
+  return NextResponse.json(user);
+}

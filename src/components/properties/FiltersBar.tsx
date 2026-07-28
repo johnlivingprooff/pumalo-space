@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useCallback } from "react";
 
 export type FiltersBarProps = {
   cities: string[];
@@ -13,6 +13,17 @@ export type FiltersBarProps = {
     bedrooms?: string;
     bathrooms?: string;
   };
+};
+
+const PRICE_MIN = 0;
+const PRICE_MAX = 1000000;
+const DEFAULT_MIN = 10000;
+const DEFAULT_MAX = 650000;
+
+const formatPrice = (val: number) => {
+  if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+  if (val >= 1000) return `${(val / 1000).toFixed(0)}k`;
+  return String(val);
 };
 
 function Pill({
@@ -45,49 +56,50 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const setParam = (key: string, value?: string) => {
-    const params = new URLSearchParams(searchParams?.toString());
-    if (!value) {
-      params.delete(key);
-    } else {
-      params.set(key, value);
-    }
-    // Reset pagination if any future page param exists
-    params.delete("page");
-    const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
-  };
-
-  const setParams = (entries: Record<string, string | undefined>) => {
-    const params = new URLSearchParams(searchParams?.toString());
-    Object.entries(entries).forEach(([key, value]) => {
+  const setParam = useCallback(
+    (key: string, value?: string) => {
+      const params = new URLSearchParams(searchParams?.toString());
       if (!value) {
         params.delete(key);
       } else {
         params.set(key, value);
       }
-    });
-    params.delete("page");
-    const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
-  };
+      params.delete("page");
+      const qs = params.toString();
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [router, pathname, searchParams],
+  );
 
-  const toggleParam = (key: string, value: string) => {
-    const current = searchParams?.get(key);
-    if (current === value) {
-      setParam(key, undefined);
-    } else {
-      setParam(key, value);
-    }
-  };
+  const setParams = useCallback(
+    (entries: Record<string, string | undefined>) => {
+      const params = new URLSearchParams(searchParams?.toString());
+      Object.entries(entries).forEach(([key, value]) => {
+        if (!value) {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      });
+      params.delete("page");
+      const qs = params.toString();
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [router, pathname, searchParams],
+  );
 
-  // Price slider configuration
-  const PRICE_MIN = 0;
-  const PRICE_MAX = 1000000;
-  const DEFAULT_MIN = 10000;
-  const DEFAULT_MAX = 650000;
+  const toggleParam = useCallback(
+    (key: string, value: string) => {
+      const current = searchParams?.get(key);
+      if (current === value) {
+        setParam(key, undefined);
+      } else {
+        setParam(key, value);
+      }
+    },
+    [searchParams, setParam],
+  );
 
-  // Local state for slider values
   const [minSlider, setMinSlider] = React.useState<number>(
     selected.minPrice ? Number(selected.minPrice) : DEFAULT_MIN,
   );
@@ -95,15 +107,11 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
     selected.maxPrice ? Number(selected.maxPrice) : DEFAULT_MAX,
   );
 
-  // Sync local slider with URL params
   React.useEffect(() => {
     setMinSlider(selected.minPrice ? Number(selected.minPrice) : DEFAULT_MIN);
-  }, [selected.minPrice]);
-  React.useEffect(() => {
     setMaxSlider(selected.maxPrice ? Number(selected.maxPrice) : DEFAULT_MAX);
-  }, [selected.maxPrice]);
+  }, [selected.minPrice, selected.maxPrice]);
 
-  // Debounced URL update for slider changes
   React.useEffect(() => {
     const handle = setTimeout(() => {
       const min = minSlider === DEFAULT_MIN ? undefined : String(minSlider);
@@ -114,19 +122,11 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
   }, [minSlider, maxSlider, setParams]);
 
   const handleMinChange = (val: number) => {
-    const clamped = Math.max(PRICE_MIN, Math.min(val, maxSlider));
-    setMinSlider(clamped);
+    setMinSlider(Math.max(PRICE_MIN, Math.min(val, maxSlider)));
   };
 
   const handleMaxChange = (val: number) => {
-    const clamped = Math.min(PRICE_MAX, Math.max(val, minSlider));
-    setMaxSlider(clamped);
-  };
-
-  const formatPrice = (val: number) => {
-    if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-    if (val >= 1000) return `${(val / 1000).toFixed(0)}k`;
-    return String(val);
+    setMaxSlider(Math.min(PRICE_MAX, Math.max(val, minSlider)));
   };
 
   return (
@@ -137,7 +137,7 @@ export const FiltersBar: React.FC<FiltersBarProps> = ({ cities, selected }) => {
         </h2>
         <button
           type="button"
-          onClick={() => router.push(pathname)}
+          onClick={() => router.push(pathname, { scroll: false })}
           className="text-sm text-gray-600 hover:text-gray-900 underline"
         >
           Clear all

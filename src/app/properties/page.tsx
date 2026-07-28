@@ -2,11 +2,20 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+import { cache } from "react";
 import type { PropertyType } from "@prisma/client";
 import { stackServerApp } from "@stack/server";
 import { FiltersBar } from "@/components/properties/FiltersBar";
 import { PropertyCard } from "@/components/properties/PropertyCard";
 import prisma from "@/lib/prisma";
+
+const getCities = cache(async () => {
+  const properties = await prisma.property.findMany({
+    select: { city: true },
+    distinct: ["city"],
+  });
+  return properties.map((p) => p.city);
+});
 
 interface SearchParams {
   type?: string;
@@ -101,20 +110,16 @@ export default async function PropertiesPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const properties = await getProperties(params);
 
-  // Get current user and their favorites
-  const user = await stackServerApp.getUser();
+  const [properties, user, cities] = await Promise.all([
+    getProperties(params),
+    stackServerApp.getUser(),
+    getCities(),
+  ]);
+
   const favoriteIds = user
     ? await getUserFavorites(user.id)
     : new Set<string>();
-
-  // Get unique cities for filter
-  const allProperties = await prisma.property.findMany({
-    select: { city: true },
-    distinct: ["city"],
-  });
-  const cities = allProperties.map((p) => p.city);
 
   return (
     <div className="min-h-screen bg-gray-50">

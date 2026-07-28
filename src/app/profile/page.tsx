@@ -2,7 +2,6 @@ import { stackServerApp } from "@stack/server";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { CreateProfileButton } from "@/components/profile/CreateProfileButton";
-import { Button } from "@/components/ui/Button";
 import { ensureUserInDatabase } from "@/lib/ensureUser";
 import prisma from "@/lib/prisma";
 
@@ -171,9 +170,12 @@ export default async function ProfilePage() {
 
             {/* Edit Button */}
             <div>
-              <Button variant="outline" size="sm">
+              <a
+                href="/profile/edit"
+                className="inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 px-3 py-1.5 text-sm"
+              >
                 Edit Profile
-              </Button>
+              </a>
             </div>
           </div>
 
