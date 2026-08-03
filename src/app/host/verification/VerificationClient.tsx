@@ -69,6 +69,7 @@ const STATUS_CONFIG: Record<
 const submittable = new Set<VerificationStatus>([
   "PENDING",
   "NEEDS_RESUBMISSION",
+  "REJECTED",
 ]);
 
 export function VerificationClient({

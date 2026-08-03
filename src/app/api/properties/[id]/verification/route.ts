@@ -22,7 +22,7 @@ export async function PATCH(
   if (!property)
     return NextResponse.json({ error: "Property not found" }, { status: 404 });
 
-  const submittable = ["PENDING", "NEEDS_RESUBMISSION"];
+  const submittable = ["PENDING", "NEEDS_RESUBMISSION", "REJECTED"];
   if (!submittable.includes(property.verificationStatus)) {
     return NextResponse.json(
       { error: "Cannot submit from current status" },

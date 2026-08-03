@@ -47,8 +47,8 @@ export async function PATCH() {
       { status: 404 },
     );
 
-  // Only allow submission from PENDING or NEEDS_RESUBMISSION
-  const submittable = ["PENDING", "NEEDS_RESUBMISSION"];
+  // Only allow submission from PENDING, NEEDS_RESUBMISSION, or REJECTED
+  const submittable = ["PENDING", "NEEDS_RESUBMISSION", "REJECTED"];
   if (!submittable.includes(profile.verificationStatus)) {
     return NextResponse.json(
       { error: "Cannot submit from current status" },

@@ -28,6 +28,7 @@ export default function DriveUploader({
   const [uploading, setUploading] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [verificationType, setVerificationType] =
     useState<VerificationType>("id");
@@ -71,8 +72,12 @@ export default function DriveUploader({
     setLoading(true);
     try {
       const next =
-        window.location.pathname + window.location.search + window.location.hash;
-      const res = await fetch(`/api/drive/auth?next=${encodeURIComponent(next)}`);
+        window.location.pathname +
+        window.location.search +
+        window.location.hash;
+      const res = await fetch(
+        `/api/drive/auth?next=${encodeURIComponent(next)}`,
+      );
       const data = await res.json();
       window.location.href = data.authUrl;
     } catch (_err) {
@@ -133,6 +138,27 @@ export default function DriveUploader({
     if (file) uploadFile(file);
   };
 
+  const deleteDocument = async (id: string) => {
+    if (!window.confirm("Delete this document? This cannot be undone.")) return;
+    setDeletingId(id);
+    setError("");
+    try {
+      const res = await fetch(`/api/drive/documents/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete document");
+      }
+      setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+      onDocumentsChange?.(documents.length - 1);
+    } catch (err: any) {
+      setError(err.message || "Failed to delete document");
+    } finally {
+      setDeletingId("");
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <h2 className="text-2xl font-bold">
@@ -147,7 +173,7 @@ export default function DriveUploader({
 
       {!connected ? (
         <div className="border rounded-lg p-6 text-center space-y-4">
-          <p className="text-gray-600">
+          <p className="text-gray-800">
             Connect your Google Drive to upload verification documents
           </p>
           <button
@@ -209,7 +235,7 @@ export default function DriveUploader({
           <div className="space-y-3">
             <h3 className="font-medium">Your Documents</h3>
             {documents.length === 0 ? (
-              <p className="text-gray-500 text-sm">No documents uploaded yet</p>
+              <p className="text-gray-700 text-sm">No documents uploaded yet</p>
             ) : (
               <div className="space-y-2">
                 {documents.map((doc) => (
@@ -219,19 +245,29 @@ export default function DriveUploader({
                   >
                     <div>
                       <p className="font-medium">{doc.fileName}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {doc.verificationType} •{" "}
                         {new Date(doc.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <a
-                      href={doc.webViewLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-700 text-sm"
-                    >
-                      View
-                    </a>
+                    <div className="flex items-center gap-4 flex-shrink-0">
+                      <a
+                        href={doc.webViewLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700 text-sm"
+                      >
+                        View
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => deleteDocument(doc.id)}
+                        disabled={deletingId === doc.id}
+                        className="text-red-600 hover:text-red-700 text-sm disabled:opacity-50"
+                      >
+                        {deletingId === doc.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

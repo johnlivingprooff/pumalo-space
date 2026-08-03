@@ -21,6 +21,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       fullWidth = false,
       className = "",
       id,
+      disabled = false,
       ...props
     },
     ref,
@@ -34,6 +35,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       "border-gray-300 focus:border-primary-500 focus:ring-primary-500";
     const errorStyles =
       "border-red-500 focus:border-red-500 focus:ring-red-500";
+    const disabledStyles =
+      "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed";
     const widthStyle = fullWidth ? "w-full" : "";
     const iconPaddingLeft = leftIcon ? "pl-10" : "";
     const iconPaddingRight = rightIcon ? "pr-10" : "";
@@ -57,7 +60,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={`${baseStyles} ${hasError ? errorStyles : normalStyles} ${widthStyle} ${iconPaddingLeft} ${iconPaddingRight} ${className}`}
+            disabled={disabled}
+            className={`${baseStyles} ${hasError ? errorStyles : normalStyles} ${disabled ? disabledStyles : ""} ${widthStyle} ${iconPaddingLeft} ${iconPaddingRight} ${className}`}
             {...props}
           />
           {rightIcon && (

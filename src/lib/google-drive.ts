@@ -153,6 +153,15 @@ export async function getFileMetadata(accessToken: string, fileId: string) {
   return response.json();
 }
 
+export async function deleteFileFromDrive(accessToken: string, fileId: string) {
+  const response = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (!response.ok) throw new Error("Failed to delete file from Drive");
+}
+
 export async function makeFilePublic(accessToken: string, fileId: string) {
   await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}/permissions`, {
     method: "POST",
