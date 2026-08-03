@@ -15,9 +15,25 @@ export async function PATCH(req: NextRequest) {
   const body = await req.json();
   const sanitized = sanitizeUserProfile(body);
 
+  const { displayName, ...profileData } = sanitized;
+
+  if (displayName) {
+    try {
+      await stackUser.update({ displayName });
+    } catch {
+      return NextResponse.json(
+        { error: "Failed to update display name" },
+        { status: 500 },
+      );
+    }
+  }
+
   const user = await prisma.user.update({
     where: { id: stackUser.id },
-    data: sanitized,
+    data: {
+      ...profileData,
+      ...(displayName ? { name: displayName } : {}),
+    },
     select: {
       id: true,
       name: true,

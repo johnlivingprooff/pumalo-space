@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type VerificationType = "id" | "title_deed" | "other";
 
@@ -32,7 +32,22 @@ export default function DriveUploader({
   const [verificationType, setVerificationType] =
     useState<VerificationType>("id");
 
-  const _checkConnection = async () => {
+  const fetchDocuments = useCallback(async () => {
+    try {
+      const query = propertyId
+        ? `?propertyId=${encodeURIComponent(propertyId)}`
+        : "";
+      const res = await fetch(`/api/drive/documents${query}`);
+      const data = await res.json();
+      const docs = data.documents || [];
+      setDocuments(docs);
+      onDocumentsChange?.(docs.length);
+    } catch (_err) {
+      setError("Failed to fetch documents");
+    }
+  }, [propertyId, onDocumentsChange]);
+
+  const checkConnection = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/drive/auth");
@@ -44,12 +59,20 @@ export default function DriveUploader({
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchDocuments]);
+
+  // On mount (including after returning from the Drive OAuth flow),
+  // detect whether Drive is already connected so the user can keep uploading.
+  useEffect(() => {
+    checkConnection();
+  }, [checkConnection]);
 
   const connectDrive = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/drive/auth");
+      const next =
+        window.location.pathname + window.location.search + window.location.hash;
+      const res = await fetch(`/api/drive/auth?next=${encodeURIComponent(next)}`);
       const data = await res.json();
       window.location.href = data.authUrl;
     } catch (_err) {
@@ -68,21 +91,6 @@ export default function DriveUploader({
       setError("Failed to disconnect");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchDocuments = async () => {
-    try {
-      const query = propertyId
-        ? `?propertyId=${encodeURIComponent(propertyId)}`
-        : "";
-      const res = await fetch(`/api/drive/documents${query}`);
-      const data = await res.json();
-      const docs = data.documents || [];
-      setDocuments(docs);
-      onDocumentsChange?.(docs.length);
-    } catch (_err) {
-      setError("Failed to fetch documents");
     }
   };
 

@@ -18,6 +18,7 @@ export default function EditProfileForm({ profile }: { profile: ProfileData }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
+    displayName: profile.name ?? "",
     firstName: profile.firstName ?? "",
     lastName: profile.lastName ?? "",
     phone: profile.phone ?? "",

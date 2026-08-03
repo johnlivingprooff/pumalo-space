@@ -1,10 +1,10 @@
 import { stackServerApp } from "@stack/server";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { ensureUserInDatabase } from "@/lib/ensureUser";
-import { getAuthUrl, revokeAccess } from "@/lib/google-drive";
+import { getAuthUrl, revokeAccess, sanitizeNext } from "@/lib/google-drive";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const stackUser = await stackServerApp.getUser();
   if (!stackUser)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,7 +21,8 @@ export async function GET() {
   const token = await prisma.googleDriveToken.findUnique({
     where: { userId: user.id },
   });
-  const authUrl = getAuthUrl(user.id);
+  const next = sanitizeNext(request.nextUrl.searchParams.get("next") || "/");
+  const authUrl = getAuthUrl(user.id, next);
 
   return NextResponse.json({ authUrl, connected: !!token });
 }

@@ -209,6 +209,9 @@ export function sanitizeUserProfile(data: any): any {
     lastName: data.lastName ? sanitizeString(data.lastName, 50) : undefined,
     phone: data.phone ? sanitizeString(data.phone, 20) : undefined,
     bio: data.bio ? sanitizeString(data.bio, 500) : undefined,
+    displayName: data.displayName
+      ? sanitizeString(data.displayName, 50)
+      : undefined,
   };
 }
 

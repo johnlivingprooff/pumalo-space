@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { exchangeCodeForTokens } from "@/lib/google-drive";
+import { exchangeCodeForTokens, sanitizeNext } from "@/lib/google-drive";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -10,7 +10,9 @@ export async function GET(request: NextRequest) {
   const origin = new URL(request.url).origin;
 
   if (error) {
-    return NextResponse.redirect(new URL("/?drive_denied=1", request.url));
+    return NextResponse.redirect(
+      new URL("/?drive_denied=1", request.url),
+    );
   }
 
   if (!code || !state) {
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest) {
   try {
     const parsed = JSON.parse(state);
     userId = parsed.userId;
-    next = parsed.next || "/";
+    next = sanitizeNext(parsed.next || "/");
   } catch {
     userId = state;
   }

@@ -32,7 +32,9 @@ export function DriveImageUpload({
   }, []);
 
   const connect = async () => {
-    const res = await fetch("/api/drive/auth");
+    const next =
+      window.location.pathname + window.location.search + window.location.hash;
+    const res = await fetch(`/api/drive/auth?next=${encodeURIComponent(next)}`);
     const data = await res.json();
     window.location.href = data.authUrl;
   };

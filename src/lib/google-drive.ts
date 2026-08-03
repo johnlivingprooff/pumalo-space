@@ -26,6 +26,15 @@ export function getAuthUrl(userId: string, next = "/"): string {
   return `${GOOGLE_OAUTH_URL}?${params}`;
 }
 
+// Keep post-OAuth redirects on this app's own origin to avoid open redirects.
+export function sanitizeNext(next: string): string {
+  const value = next.trim();
+  if (!value.startsWith("/")) return "/";
+  if (value.startsWith("//")) return "/";
+  if (value.includes("\\")) return "/";
+  return value;
+}
+
 export async function exchangeCodeForTokens(code: string, userId: string) {
   const response = await fetch(GOOGLE_TOKEN_URL, {
     method: "POST",
