@@ -46,7 +46,7 @@ model User {
   favorites     Favorite[]
   hostProfile   HostProfile?
   sentMessages  Message[]  @relation("SentMessages")
-  receivedMessages Message[] @relation("ReceivedMessages")
+  conversationParticipants ConversationParticipant[]
   googleDriveToken GoogleDriveToken?
   verificationDocuments VerificationDocument[]
   propertyDrafts PropertyDraft[]
@@ -102,7 +102,7 @@ model Property {
   bookings      Booking[]
   reviews       Review[]
   favorites     Favorite[]
-  messages      Message[]
+  conversations Conversation[]
   inquiries     Inquiry[]
   
   createdAt     DateTime     @default(now())
@@ -292,30 +292,54 @@ model VerificationDocument {
   @@map("verification_documents")
 }
 
-model Message {
-  id         String   @id @default(cuid())
-  
-  // Sender and recipient
-  senderId   String
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
-  recipientId String
-  recipient  User     @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
-  
-  // Message content
-  content    String   @db.Text
-  isRead     Boolean  @default(false)
-  
-  // Optional property reference (for property inquiries)
-  propertyId String?
-  property   Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
-  
-  createdAt  DateTime @default(now())
-  readAt     DateTime?
-  
-  @@index([senderId])
-  @@index([recipientId])
-  @@index([senderId, recipientId])
+enum ConversationType {
+  DIRECT
+}
+
+model Conversation {
+  id            String           @id @default(cuid())
+  type          ConversationType @default(DIRECT)
+  propertyId    String?
+  property      Property?        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  lastMessageAt DateTime         @default(now())
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  participants  ConversationParticipant[]
+  messages      Message[]
+
+  @@index([lastMessageAt])
   @@index([propertyId])
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  content        String       @db.Text
+  clientId       String? // Idempotency key set by the client to prevent duplicate sends
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@unique([clientId])
+  @@index([conversationId, createdAt])
+  @@index([senderId])
   @@map("messages")
 }
 

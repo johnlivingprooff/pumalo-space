@@ -85,6 +85,29 @@ export function InquiryModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [hostContact, setHostContact] = useState<HostContact | null>(null);
+  const [isOpeningChat, setIsOpeningChat] = useState(false);
+
+  const openChat = async () => {
+    setError("");
+    setIsOpeningChat(true);
+    try {
+      const res = await fetch("/api/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: host.id, propertyId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to start conversation");
+      }
+      window.location.href = `/messages/${data.conversation.id}`;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to start conversation",
+      );
+      setIsOpeningChat(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,9 +292,20 @@ export function InquiryModal({
             )}
           </div>
 
-          <Button variant="outline" size="md" fullWidth onClick={handleClose}>
-            Done
-          </Button>
+          <div className="space-y-2">
+            <Button
+              variant="primary"
+              size="md"
+              fullWidth
+              onClick={openChat}
+              isLoading={isOpeningChat}
+            >
+              Open Chat with {hostContact.name}
+            </Button>
+            <Button variant="outline" size="md" fullWidth onClick={handleClose}>
+              Done
+            </Button>
+          </div>
         </div>
       ) : (
         /* Inquiry form */
@@ -355,6 +389,17 @@ export function InquiryModal({
           >
             {config.title}
           </Button>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={openChat}
+              disabled={isOpeningChat}
+              className="text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50"
+            >
+              Prefer to chat directly? Start a conversation
+            </button>
+          </div>
 
           <p className="text-xs text-gray-400 text-center">
             Host contact details will be shared after you send your inquiry.

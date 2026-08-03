@@ -160,6 +160,13 @@ export const UserMenu: React.FC = () => {
           >
             My Bookings
           </Link>
+          <Link
+            href="/messages"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => setIsDropdownOpen(false)}
+          >
+            Messages
+          </Link>
 
           <div className="border-t border-gray-200 my-2" />
 

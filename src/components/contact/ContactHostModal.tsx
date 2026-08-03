@@ -1,6 +1,8 @@
 "use client";
 
+import { useUser } from "@stackframe/stack";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 
@@ -15,6 +17,7 @@ export interface ContactHostModalProps {
     phone?: string | null;
   };
   propertyTitle: string;
+  propertyId?: string;
 }
 
 export function ContactHostModal({
@@ -22,8 +25,40 @@ export function ContactHostModal({
   onClose,
   host,
   propertyTitle,
+  propertyId,
 }: ContactHostModalProps) {
+  const user = useUser();
+  const router = useRouter();
   const [copied, setCopied] = useState<"email" | "phone" | null>(null);
+  const [isOpeningChat, setIsOpeningChat] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+
+  const openChat = async () => {
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+    setChatError(null);
+    setIsOpeningChat(true);
+    try {
+      const res = await fetch("/api/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: host.id, propertyId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to start conversation");
+      }
+      onClose();
+      router.push(`/messages/${data.conversation.id}`);
+    } catch (err) {
+      setChatError(
+        err instanceof Error ? err.message : "Failed to start conversation",
+      );
+      setIsOpeningChat(false);
+    }
+  };
 
   const whatsappNumber = host.phone?.replace(/\D/g, "");
   const whatsappMessage = `Hi, I'm interested in your property: ${propertyTitle}`;
@@ -193,7 +228,12 @@ export function ContactHostModal({
             </div>
           </button>
 
-          <div className="flex items-center gap-3 p-4 border border-dashed border-gray-300 rounded-lg bg-gray-50 opacity-60">
+          <button
+            type="button"
+            onClick={openChat}
+            disabled={isOpeningChat}
+            className="flex items-center gap-3 p-4 border border-purple-300 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors w-full"
+          >
             <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
               <svg
                 className="w-5 h-5 text-white"
@@ -201,6 +241,7 @@ export function ContactHostModal({
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
+                <title>Chat</title>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -209,11 +250,29 @@ export function ContactHostModal({
                 />
               </svg>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 text-left">
               <p className="font-medium text-gray-900">In-App Message</p>
-              <p className="text-sm text-gray-600">Coming soon</p>
+              <p className="text-sm text-gray-600">
+                {isOpeningChat ? "Starting..." : "Message them on Pumalo Space"}
+              </p>
             </div>
-          </div>
+            <svg
+              className="w-5 h-5 text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <title>Open chat</title>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+
+          {chatError && <p className="text-sm text-red-600">{chatError}</p>}
         </div>
 
         <p className="text-xs text-gray-500 text-center">
