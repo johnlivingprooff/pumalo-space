@@ -26,35 +26,43 @@ export async function POST(request: NextRequest) {
     // Extract and coerce types
     const rawPhone = body.phone;
     const rawBio = body.bio;
+    const rawOwnershipType = body.ownershipType;
+    const rawPropertyName = body.propertyName;
+    const rawPropertyType = body.propertyType;
+    const rawPropertyCity = body.propertyCity;
     const rawIdType = body.idType;
     const rawIdNumber = body.idNumber;
-    const rawPaymentMethod = body.paymentMethod;
-    const rawAccountDetails = body.accountDetails;
 
     const phone = typeof rawPhone === "string" ? rawPhone.trim() : "";
     const bio = typeof rawBio === "string" ? rawBio.trim() : "";
+    const ownershipType =
+      typeof rawOwnershipType === "string" ? rawOwnershipType.trim() : "";
+    const propertyName =
+      typeof rawPropertyName === "string" ? rawPropertyName.trim() : "";
+    const propertyType =
+      typeof rawPropertyType === "string" ? rawPropertyType.trim() : "";
+    const propertyCity =
+      typeof rawPropertyCity === "string" ? rawPropertyCity.trim() : "";
     const idType = typeof rawIdType === "string" ? rawIdType.trim() : "";
     const idNumber = typeof rawIdNumber === "string" ? rawIdNumber.trim() : "";
-    const paymentMethod =
-      typeof rawPaymentMethod === "string" ? rawPaymentMethod.trim() : "";
-    const accountDetails =
-      typeof rawAccountDetails === "string"
-        ? rawAccountDetails
-        : rawAccountDetails != null
-          ? JSON.stringify(rawAccountDetails)
-          : "";
+
+    const validOwnership = ["own", "manage"];
+    const validPropertyTypes = ["RENT", "BUY", "LODGE"];
 
     // Validate required fields
     if (
       !phone ||
-      !bio ||
+      !ownershipType ||
+      !validOwnership.includes(ownershipType) ||
+      !propertyName ||
+      !propertyType ||
+      !validPropertyTypes.includes(propertyType) ||
+      !propertyCity ||
       !idType ||
-      !idNumber ||
-      !paymentMethod ||
-      !accountDetails
+      !idNumber
     ) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing or invalid required fields" },
         { status: 400 },
       );
     }
@@ -65,7 +73,7 @@ export async function POST(request: NextRequest) {
         where: { id: stackUser.id },
         data: {
           phone,
-          bio,
+          ...(bio ? { bio } : {}),
           isHost: true,
         },
         select: {
@@ -82,14 +90,18 @@ export async function POST(request: NextRequest) {
           userId: stackUser.id,
           idType,
           idNumber,
-          paymentMethod,
-          accountDetails,
+          ownershipType,
+          propertyName,
+          propertyType,
+          propertyCity,
         },
         update: {
           idType,
           idNumber,
-          paymentMethod,
-          accountDetails,
+          ownershipType,
+          propertyName,
+          propertyType,
+          propertyCity,
         },
       }),
     ]);

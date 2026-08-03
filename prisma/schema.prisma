@@ -201,8 +201,12 @@ model HostProfile {
   // Onboarding details (basic, non-sensitive for demo)
   idType         String
   idNumber       String
-  paymentMethod  String
-  accountDetails String
+  ownershipType  String? // "own" | "manage"
+  propertyName   String?
+  propertyType   String? // "RENT" | "BUY" | "LODGE"
+  propertyCity   String?
+  paymentMethod  String? // Reserved for future payouts
+  accountDetails String? // Reserved for future payouts
 
   // Verification workflow
   verificationStatus VerificationStatus @default(PENDING)

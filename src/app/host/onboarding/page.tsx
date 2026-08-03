@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/Input";
 type OnboardingStep =
   | "welcome"
   | "profile"
+  | "property"
   | "verification"
-  | "payout"
   | "complete";
 
 export default function HostOnboardingPage() {
@@ -20,21 +20,29 @@ export default function HostOnboardingPage() {
   const [formData, setFormData] = useState({
     phone: "",
     bio: "",
+    ownershipType: "",
+    propertyName: "",
+    propertyType: "",
+    propertyCity: "",
     idType: "",
     idNumber: "",
-    paymentMethod: "",
-    accountDetails: "",
   });
 
   const steps: OnboardingStep[] = [
     "welcome",
     "profile",
+    "property",
     "verification",
-    "payout",
     "complete",
   ];
+  const contentSteps: OnboardingStep[] = [
+    "profile",
+    "property",
+    "verification",
+  ];
   const currentStepIndex = steps.indexOf(currentStep);
-  const progress = ((currentStepIndex + 1) / steps.length) * 100;
+  const currentContentIndex = contentSteps.indexOf(currentStep);
+  const progress = ((currentContentIndex + 1) / contentSteps.length) * 100;
 
   const handleNext = () => {
     const nextIndex = currentStepIndex + 1;
@@ -146,10 +154,10 @@ export default function HostOnboardingPage() {
                     2
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-1">
-                    Verify Identity
+                    Add Property Details
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Confirm your ID for trust & safety
+                    Tell us about your first listing
                   </p>
                 </div>
                 <div className="text-center">
@@ -157,10 +165,10 @@ export default function HostOnboardingPage() {
                     3
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-1">
-                    Setup Payouts
+                    Verify Identity
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Add your payment details
+                    Confirm your ID for trust & safety
                   </p>
                 </div>
               </div>
@@ -198,7 +206,7 @@ export default function HostOnboardingPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bio (Tell guests about yourself)
+                    Bio (Optional - tell guests about yourself)
                   </label>
                   <textarea
                     rows={4}
@@ -219,7 +227,147 @@ export default function HostOnboardingPage() {
                 <Button
                   variant="primary"
                   onClick={handleNext}
-                  disabled={!formData.phone || !formData.bio}
+                  disabled={!formData.phone}
+                >
+                  Continue
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Property Step */}
+          {currentStep === "property" && (
+            <div className="p-8 sm:p-12">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Add Property Details
+              </h2>
+              <p className="text-gray-600 mb-8">
+                Tell us about the property you'd like to list
+              </p>
+
+              <div className="space-y-6 max-w-xl">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Do you own this property or manage it for others?
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {(
+                      [
+                        {
+                          value: "own",
+                          label: "I Own It",
+                          description: "This is my property",
+                        },
+                        {
+                          value: "manage",
+                          label: "I Manage It",
+                          description: "I manage it for the owner",
+                        },
+                      ] as const
+                    ).map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            ownershipType: option.value,
+                          })
+                        }
+                        className={`p-4 rounded-xl border-2 text-left transition ${
+                          formData.ownershipType === option.value
+                            ? "border-primary-600 bg-primary-50"
+                            : "border-gray-200 hover:border-gray-300 bg-white"
+                        }`}
+                      >
+                        <span
+                          className={`block font-semibold mb-1 ${
+                            formData.ownershipType === option.value
+                              ? "text-primary-700"
+                              : "text-gray-900"
+                          }`}
+                        >
+                          {option.label}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          {option.description}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Property Name
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., Cozy 2BR Apartment in Westlands"
+                    value={formData.propertyName}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        propertyName: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Listing Type
+                    </label>
+                    <select
+                      value={formData.propertyType}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          propertyType: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
+                    >
+                      <option value="">Select type</option>
+                      <option value="RENT">For Rent</option>
+                      <option value="BUY">For Sale</option>
+                      <option value="LODGE">Lodge/Short-term</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      City
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="e.g., Nairobi"
+                      value={formData.propertyCity}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          propertyCity: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 mt-8">
+                <Button variant="outline" onClick={handleBack}>
+                  Back
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleNext}
+                  disabled={
+                    !formData.ownershipType ||
+                    !formData.propertyName ||
+                    !formData.propertyType ||
+                    !formData.propertyCity
+                  }
                 >
                   Continue
                 </Button>
@@ -241,6 +389,25 @@ export default function HostOnboardingPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     ID Type
+                    <span className="relative inline-flex ml-1 align-middle group">
+                      <svg
+                        className="w-4 h-4 text-gray-400 cursor-help"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 px-3 py-2 text-xs text-white bg-gray-900 rounded-lg opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
+                        You'll need to upload a government-issued ID (National
+                        ID, passport, or driver's license) for proper
+                        verification. You can add your details now and upload
+                        the document later.
+                      </span>
+                    </span>
                   </label>
                   <select
                     value={formData.idType}
@@ -284,12 +451,12 @@ export default function HostOnboardingPage() {
                       />
                     </svg>
                     <div className="text-sm text-blue-800">
-                      <p className="font-medium mb-1">
-                        Your information is secure
-                      </p>
+                      <p className="font-medium mb-1">Upload your ID later</p>
                       <p>
-                        We use bank-level encryption to protect your personal
-                        data.
+                        We'll ask you to upload a government-issued ID (National
+                        ID, passport, or driver's license) for proper
+                        verification. You can enter your details now and upload
+                        the document later from your host dashboard.
                       </p>
                     </div>
                   </div>
@@ -308,116 +475,6 @@ export default function HostOnboardingPage() {
                   Continue
                 </Button>
               </div>
-            </div>
-          )}
-
-          {/* Payout Step */}
-          {currentStep === "payout" && (
-            <div className="p-8 sm:p-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Setup Payouts
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Add your payment details to receive earnings
-              </p>
-
-              <div className="space-y-6 max-w-xl">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Payment Method
-                  </label>
-                  <select
-                    value={formData.paymentMethod}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        paymentMethod: e.target.value,
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-600"
-                  >
-                    <option value="">Select payment method</option>
-                    <option value="mpesa">M-Pesa</option>
-                    <option value="bank">Bank Transfer</option>
-                    <option value="paypal">PayPal</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {formData.paymentMethod === "mpesa" &&
-                      "M-Pesa Phone Number"}
-                    {formData.paymentMethod === "bank" && "Bank Account Number"}
-                    {formData.paymentMethod === "paypal" && "PayPal Email"}
-                    {!formData.paymentMethod && "Account Details"}
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder={
-                      formData.paymentMethod === "mpesa"
-                        ? "+254 712 345 678"
-                        : formData.paymentMethod === "bank"
-                          ? "Account number"
-                          : formData.paymentMethod === "paypal"
-                            ? "email@example.com"
-                            : "Enter your account details"
-                    }
-                    value={formData.accountDetails}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        accountDetails: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <svg
-                      className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <div className="text-sm text-amber-800">
-                      <p className="font-medium mb-1">Payout Schedule</p>
-                      <p>
-                        Earnings are typically transferred within 3-5 business
-                        days after a guest checks out.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 mt-8">
-                <Button variant="outline" onClick={handleBack}>
-                  Back
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={handleNext}
-                  disabled={
-                    !formData.paymentMethod ||
-                    !formData.accountDetails ||
-                    isLoading
-                  }
-                >
-                  {isLoading ? "Completing..." : "Complete Setup"}
-                </Button>
-              </div>
-
-              {error && (
-                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-800">{error}</p>
-                </div>
-              )}
             </div>
           )}
 
@@ -527,6 +584,12 @@ export default function HostOnboardingPage() {
               >
                 {isLoading ? "Setting up..." : "Go to My Listings"}
               </Button>
+
+              {error && (
+                <div className="mt-6 max-w-2xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
             </div>
           )}
         </div>
