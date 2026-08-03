@@ -192,136 +192,139 @@ export default function MessageThreadPage() {
   const isMe = (message: Message) => message.senderId === user?.id;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
-          <Link
-            href="/messages"
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Back to messages"
-          >
-            <svg
-              className="w-5 h-5 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+    <>
+      <style>{`footer { display: none !important; }`}</style>
+      <div className="h-[calc(100dvh-4rem)] bg-gray-50 flex flex-col">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
+            <Link
+              href="/messages"
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Back to messages"
             >
-              <title>Back to messages</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
-          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold overflow-hidden flex-shrink-0">
-            <Image
-              src={conversation?.otherParticipant?.avatar || "/user.svg"}
-              alt={conversation?.otherParticipant?.name || "User"}
-              width={40}
-              height={40}
-              className="w-full h-full object-cover"
-              unoptimized
-            />
-          </div>
-          <div className="min-w-0">
-            <h1 className="font-semibold text-gray-900 truncate">
-              {conversation?.otherParticipant?.name || "Conversation"}
-            </h1>
-            {conversation?.property && (
-              <p className="text-xs text-gray-500 truncate">
-                {conversation.property.title}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {error && (
-        <div className="max-w-3xl w-full mx-auto mt-4 px-4 sm:px-6 lg:px-8">
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-800">{error}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Messages */}
-      <div className="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-y-auto">
-        {loading ? (
-          <div className="text-center py-16 text-gray-500">Loading...</div>
-        ) : (
-          <div className="space-y-3">
-            {hasMore && (
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={loadOlder}
-                  className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-                >
-                  Load older messages
-                </button>
-              </div>
-            )}
-
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${isMe(message) ? "justify-end" : "justify-start"}`}
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <div
-                  className={`max-w-[75%] px-4 py-2.5 rounded-2xl ${
-                    isMe(message)
-                      ? "bg-primary-600 text-white rounded-br-sm"
-                      : "bg-white border border-gray-200 text-gray-900 rounded-bl-sm"
-                  }`}
-                >
-                  <p className="text-sm whitespace-pre-wrap break-words">
-                    {message.content}
-                  </p>
-                  <p
-                    className={`text-[10px] mt-1 ${
-                      isMe(message) ? "text-primary-100" : "text-gray-400"
-                    }`}
-                  >
-                    {formatTime(message.createdAt)}
-                    {isMe(message) && message.readAt && " · Read"}
-                  </p>
-                </div>
-              </div>
-            ))}
-            <div ref={bottomRef} />
+                <title>Back to messages</title>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </Link>
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold overflow-hidden flex-shrink-0">
+              <Image
+                src={conversation?.otherParticipant?.avatar || "/user.svg"}
+                alt={conversation?.otherParticipant?.name || "User"}
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
+                unoptimized
+              />
+            </div>
+            <div className="min-w-0">
+              <h1 className="font-semibold text-gray-900 truncate">
+                {conversation?.otherParticipant?.name || "Conversation"}
+              </h1>
+              {conversation?.property && (
+                <p className="text-xs text-gray-500 truncate">
+                  {conversation.property.title}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {error && (
+          <div className="max-w-3xl w-full mx-auto mt-4 px-4 sm:px-6 lg:px-8">
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-800">{error}</p>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* Composer */}
-      <div className="bg-white border-t border-gray-200">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-end gap-3">
-          <textarea
-            rows={1}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder="Write a message..."
-            className="flex-1 resize-none px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-900 placeholder:text-gray-400 max-h-32"
-          />
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={!input.trim() || sending}
-            className="px-5 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {sending ? "Sending..." : "Send"}
-          </button>
+        {/* Messages */}
+        <div className="flex-1 min-h-0 w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-y-auto">
+          {loading ? (
+            <div className="text-center py-16 text-gray-500">Loading...</div>
+          ) : (
+            <div className="space-y-3">
+              {hasMore && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={loadOlder}
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                  >
+                    Load older messages
+                  </button>
+                </div>
+              )}
+
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${isMe(message) ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[75%] px-4 py-2.5 rounded-2xl ${
+                      isMe(message)
+                        ? "bg-primary-600 text-white rounded-br-sm"
+                        : "bg-white border border-gray-200 text-gray-900 rounded-bl-sm"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap break-words">
+                      {message.content}
+                    </p>
+                    <p
+                      className={`text-[10px] mt-1 ${
+                        isMe(message) ? "text-primary-100" : "text-gray-400"
+                      }`}
+                    >
+                      {formatTime(message.createdAt)}
+                      {isMe(message) && message.readAt && " · Read"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              <div ref={bottomRef} />
+            </div>
+          )}
+        </div>
+
+        {/* Composer */}
+        <div className="bg-white border-t border-gray-200">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-end gap-3">
+            <textarea
+              rows={1}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Write a message..."
+              className="flex-1 resize-none px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-900 placeholder:text-gray-400 max-h-32"
+            />
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={!input.trim() || sending}
+              className="px-5 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {sending ? "Sending..." : "Send"}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
