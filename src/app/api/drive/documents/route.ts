@@ -1,9 +1,9 @@
 import { stackServerApp } from "@stack/server";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { ensureUserInDatabase } from "@/lib/ensureUser";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const stackUser = await stackServerApp.getUser();
   if (!stackUser)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,8 +17,22 @@ export async function GET() {
   if (!user)
     return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+  const propertyId = request.nextUrl.searchParams.get("propertyId");
+
+  if (propertyId) {
+    const property = await prisma.property.findFirst({
+      where: { id: propertyId, hostId: user.id },
+      select: { id: true },
+    });
+    if (!property)
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 },
+      );
+  }
+
   const documents = await prisma.verificationDocument.findMany({
-    where: { userId: user.id },
+    where: { userId: user.id, propertyId: propertyId ?? null },
     orderBy: { createdAt: "desc" },
   });
 

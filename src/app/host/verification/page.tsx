@@ -19,7 +19,7 @@ export default async function VerificationPage() {
   if (!profile) redirect("/host/onboarding");
 
   const documents = await prisma.verificationDocument.findMany({
-    where: { userId: stackUser.id },
+    where: { userId: stackUser.id, propertyId: null },
     select: {
       id: true,
       fileName: true,

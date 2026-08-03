@@ -12,7 +12,17 @@ interface Document {
   webViewLink: string;
 }
 
-export default function DriveUploader() {
+interface Props {
+  propertyId?: string;
+  title?: string;
+  onDocumentsChange?: (count: number) => void;
+}
+
+export default function DriveUploader({
+  propertyId,
+  title,
+  onDocumentsChange,
+}: Props) {
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -63,9 +73,14 @@ export default function DriveUploader() {
 
   const fetchDocuments = async () => {
     try {
-      const res = await fetch("/api/drive/documents");
+      const query = propertyId
+        ? `?propertyId=${encodeURIComponent(propertyId)}`
+        : "";
+      const res = await fetch(`/api/drive/documents${query}`);
       const data = await res.json();
-      setDocuments(data.documents || []);
+      const docs = data.documents || [];
+      setDocuments(docs);
+      onDocumentsChange?.(docs.length);
     } catch (_err) {
       setError("Failed to fetch documents");
     }
@@ -88,6 +103,7 @@ export default function DriveUploader() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("verificationType", verificationType);
+    if (propertyId) formData.append("propertyId", propertyId);
 
     try {
       const res = await fetch("/api/drive/upload", {
@@ -111,7 +127,9 @@ export default function DriveUploader() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Verification Documents</h2>
+      <h2 className="text-2xl font-bold">
+        {title ?? "Verification Documents"}
+      </h2>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">

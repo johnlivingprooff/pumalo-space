@@ -20,6 +20,9 @@ async function getUserProfile(stackUserId: string) {
         bio: true,
         verified: true,
         isHost: true,
+        hostProfile: {
+          select: { verificationStatus: true },
+        },
         createdAt: true,
         _count: {
           select: {
@@ -295,6 +298,61 @@ export default async function ProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Verification */}
+        {user.isHost && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Verification
+              </h2>
+              <span
+                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                  user.hostProfile?.verificationStatus === "VERIFIED"
+                    ? "bg-green-50 text-green-700"
+                    : user.hostProfile?.verificationStatus === "UNDER_REVIEW"
+                      ? "bg-blue-50 text-blue-700"
+                      : user.hostProfile?.verificationStatus === "REJECTED"
+                        ? "bg-red-50 text-red-700"
+                        : user.hostProfile?.verificationStatus ===
+                            "NEEDS_RESUBMISSION"
+                          ? "bg-orange-50 text-orange-700"
+                          : "bg-yellow-50 text-yellow-700"
+                }`}
+              >
+                {user.hostProfile?.verificationStatus === "VERIFIED"
+                  ? "Identity Verified"
+                  : user.hostProfile?.verificationStatus === "UNDER_REVIEW"
+                    ? "Identity Under Review"
+                    : user.hostProfile?.verificationStatus === "REJECTED"
+                      ? "Identity Rejected"
+                      : user.hostProfile?.verificationStatus ===
+                          "NEEDS_RESUBMISSION"
+                        ? "Identity Needs Resubmission"
+                        : "Identity Not Verified"}
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              {user.hostProfile?.verificationStatus === "VERIFIED"
+                ? "Your identity is verified. Get each property verified to build trust with renters and buyers."
+                : "Verify your identity to get a trust badge, then verify each property you list to show it's legitimate."}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="/host/verification"
+                className="inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 bg-primary-600 text-white hover:bg-primary-700 px-4 py-2 text-sm"
+              >
+                Verify identity
+              </a>
+              <a
+                href="/host/listings"
+                className="inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 px-4 py-2 text-sm"
+              >
+                Verify properties
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

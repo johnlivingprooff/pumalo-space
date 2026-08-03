@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import {
   CheckIcon,
+  HomeIcon,
   RefreshIcon,
   ShieldIcon,
   VerificationsIcon,
   XIcon,
-} from "../_icons";
+} from "../../_icons";
 
 interface Document {
   id: string;
@@ -18,26 +19,25 @@ interface Document {
   webViewLink: string;
 }
 
-interface Verification {
+interface PropertyVerification {
   id: string;
+  title: string;
+  city: string;
+  country: string;
+  propertyType: string;
   verificationStatus: string;
   createdAt: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    avatar: string | null;
-    verificationDocuments: Document[];
-  };
+  host: { id: string; name: string; email: string; avatar: string | null };
+  verificationDocuments: Document[];
 }
 
-export default function AdminVerificationsPage() {
-  const [items, setItems] = useState<Verification[]>([]);
+export default function AdminPropertyVerificationsPage() {
+  const [items, setItems] = useState<PropertyVerification[]>([]);
   const [loading, setLoading] = useState(true);
   const [reason, setReason] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    fetch("/api/admin/verifications")
+    fetch("/api/admin/property-verifications")
       .then((r) => r.json())
       .then((data) => {
         setItems(data);
@@ -46,7 +46,7 @@ export default function AdminVerificationsPage() {
   }, []);
 
   const act = async (id: string, action: string) => {
-    const res = await fetch(`/api/admin/verifications/${id}`, {
+    const res = await fetch(`/api/admin/property-verifications/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, reason: reason[id] }),
@@ -58,10 +58,12 @@ export default function AdminVerificationsPage() {
     <div className="p-8">
       <div className="flex items-center gap-3 mb-6">
         <VerificationsIcon className="w-6 h-6 text-primary-500" />
-        <h2 className="text-2xl font-bold text-gray-900">Host Verifications</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Property Verifications
+        </h2>
       </div>
       <p className="text-sm text-gray-500 mb-6">
-        Showing hosts with status: Under Review
+        Showing properties with status: Under Review
       </p>
 
       {loading ? (
@@ -79,7 +81,7 @@ export default function AdminVerificationsPage() {
       ) : items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl text-gray-400">
           <ShieldIcon className="w-16 h-16 mb-4 opacity-30" />
-          <p className="text-sm">No pending verifications.</p>
+          <p className="text-sm">No property verifications pending.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -90,12 +92,22 @@ export default function AdminVerificationsPage() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="font-medium text-gray-900">{v.user.name}</p>
-                  <p className="text-sm text-gray-500 mt-0.5">{v.user.email}</p>
+                  <div className="flex items-center gap-2">
+                    <HomeIcon className="w-4 h-4 text-gray-400" />
+                    <p className="font-medium text-gray-900">{v.title}</p>
+                    <span className="text-xs text-gray-400 uppercase">
+                      {v.propertyType}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {v.city}, {v.country}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Host: {v.host.name} ({v.host.email})
+                  </p>
                   <p className="text-xs text-gray-400 mt-1.5">
-                    {v.user.verificationDocuments.length} document(s) uploaded
-                    &#183; Submitted{" "}
-                    {new Date(v.createdAt).toLocaleDateString()}
+                    {v.verificationDocuments.length} document(s) uploaded ·
+                    Submitted {new Date(v.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50/70 backdrop-blur-sm text-amber-700 rounded-lg text-xs font-medium border border-amber-200/30 shrink-0">
@@ -104,12 +116,12 @@ export default function AdminVerificationsPage() {
                 </span>
               </div>
 
-              {v.user.verificationDocuments.length > 0 && (
+              {v.verificationDocuments.length > 0 && (
                 <div className="mt-4 space-y-1.5">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Documents
                   </p>
-                  {v.user.verificationDocuments.map((doc) => (
+                  {v.verificationDocuments.map((doc) => (
                     <div
                       key={doc.id}
                       className="flex items-center justify-between bg-white/50 border border-white/40 rounded-lg px-3 py-2"

@@ -17,7 +17,12 @@ const navItems = [
   { href: "/admin/properties", label: "Properties", icon: PropertiesIcon },
   {
     href: "/admin/verifications",
-    label: "Verifications",
+    label: "Identity Verifications",
+    icon: VerificationsIcon,
+  },
+  {
+    href: "/admin/verifications/properties",
+    label: "Property Verifications",
     icon: VerificationsIcon,
   },
   { href: "/admin/reviews", label: "Reviews", icon: ReviewsIcon },

@@ -5,6 +5,7 @@ import { ensureUserInDatabase } from "@/lib/ensureUser";
 import {
   getAccessToken,
   getFileMetadata,
+  makeFilePublic,
   uploadFileToDrive,
 } from "@/lib/google-drive";
 import { prisma } from "@/lib/prisma";
@@ -47,6 +48,7 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
   const verificationType = formData.get("verificationType") as string | null;
+  const propertyId = (formData.get("propertyId") as string | null) ?? null;
 
   if (!file)
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -55,6 +57,18 @@ export async function POST(request: NextRequest) {
       { error: "verificationType required" },
       { status: 400 },
     );
+
+  if (propertyId) {
+    const property = await prisma.property.findFirst({
+      where: { id: propertyId, hostId: user.id },
+      select: { id: true },
+    });
+    if (!property)
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 },
+      );
+  }
 
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json(
@@ -79,17 +93,19 @@ export async function POST(request: NextRequest) {
   });
 
   const metadata = await getFileMetadata(accessToken, driveFile.id);
+  const publicViewUrl = await makeFilePublic(accessToken, driveFile.id);
 
   const doc = await prisma.verificationDocument.create({
     data: {
       userId: user.id,
+      propertyId,
       fileId: metadata.id,
       fileName: metadata.name,
       mimeType: metadata.mimeType,
       size: Number(metadata.size ?? file.size),
       verificationType: verificationType.toUpperCase() as VerificationType,
       webViewLink: metadata.webViewLink ?? "",
-      webContentLink: metadata.webContentLink ?? "",
+      webContentLink: publicViewUrl ?? metadata.webContentLink ?? "",
     },
   });
 

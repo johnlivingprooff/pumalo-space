@@ -9,35 +9,31 @@ export async function GET() {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const verifications = await prisma.hostProfile.findMany({
+  const properties = await prisma.property.findMany({
     where: { verificationStatus: "UNDER_REVIEW" },
     select: {
       id: true,
+      title: true,
+      city: true,
+      country: true,
+      propertyType: true,
       verificationStatus: true,
       createdAt: true,
-      user: {
+      host: { select: { id: true, name: true, email: true, avatar: true } },
+      verificationDocuments: {
         select: {
           id: true,
-          name: true,
-          email: true,
-          avatar: true,
-          verificationDocuments: {
-            where: { propertyId: null },
-            select: {
-              id: true,
-              fileName: true,
-              verificationType: true,
-              webContentLink: true,
-              webViewLink: true,
-              createdAt: true,
-            },
-            orderBy: { createdAt: "asc" },
-          },
+          fileName: true,
+          verificationType: true,
+          webContentLink: true,
+          webViewLink: true,
+          createdAt: true,
         },
+        orderBy: { createdAt: "asc" },
       },
     },
     orderBy: { createdAt: "asc" },
   });
 
-  return NextResponse.json(verifications);
+  return NextResponse.json(properties);
 }

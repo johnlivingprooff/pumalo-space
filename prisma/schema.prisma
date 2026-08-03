@@ -96,6 +96,11 @@ model Property {
   // Availability
   availability  DateTime[]   // Array of available dates
   
+  // Verification workflow
+  verificationStatus VerificationStatus @default(PENDING)
+  rejectionReason    String?            @db.Text
+  verifiedAt         DateTime?
+  
   // Relations
   hostId        String
   host          User         @relation(fields: [hostId], references: [id], onDelete: Cascade)
@@ -104,6 +109,7 @@ model Property {
   favorites     Favorite[]
   conversations Conversation[]
   inquiries     Inquiry[]
+  verificationDocuments VerificationDocument[]
   
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -278,6 +284,8 @@ model VerificationDocument {
   id               String           @id @default(cuid())
   userId           String
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId       String?
+  property         Property?        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   provider         String           @default("google")
   fileId           String
   fileName         String
@@ -289,6 +297,7 @@ model VerificationDocument {
   createdAt        DateTime         @default(now())
 
   @@index([userId])
+  @@index([propertyId])
   @@map("verification_documents")
 }
 

@@ -75,6 +75,12 @@ export default async function HostListingsPage() {
     redirect("/host/onboarding");
   }
 
+  const hostProfile = await prisma.hostProfile.findUnique({
+    where: { userId: stackUser.id },
+    select: { verificationStatus: true },
+  });
+  const identityStatus = hostProfile?.verificationStatus ?? "PENDING";
+
   const properties = await getHostProperties(stackUser.id);
 
   return (
@@ -96,6 +102,38 @@ export default async function HostListingsPage() {
               </Button>
             </Link>
           </div>
+
+          {identityStatus === "VERIFIED" ? (
+            <div className="mt-4 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+              <svg
+                className="w-4 h-4 text-green-600 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <p className="text-sm text-green-800">
+                Your identity is verified.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-4 flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+              <p className="text-sm text-amber-800">
+                Verify your identity to get a trust badge on your listings.
+              </p>
+              <Link
+                href="/host/verification"
+                className="text-sm font-medium text-amber-700 hover:text-amber-800 ml-4 whitespace-nowrap"
+              >
+                Verify identity
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
@@ -119,6 +157,53 @@ export default async function HostListingsPage() {
                   <p className="text-sm text-gray-600 mb-2">
                     {property.city}, {property.country}
                   </p>
+                  <div className="flex items-center justify-between mb-3">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        property.verificationStatus === "VERIFIED"
+                          ? "bg-green-50 text-green-700"
+                          : property.verificationStatus === "UNDER_REVIEW"
+                            ? "bg-blue-50 text-blue-700"
+                            : property.verificationStatus === "REJECTED"
+                              ? "bg-red-50 text-red-700"
+                              : property.verificationStatus ===
+                                  "NEEDS_RESUBMISSION"
+                                ? "bg-orange-50 text-orange-700"
+                                : "bg-yellow-50 text-yellow-700"
+                      }`}
+                    >
+                      {property.verificationStatus === "VERIFIED" && (
+                        <svg
+                          className="w-3 h-3"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                      {property.verificationStatus === "VERIFIED"
+                        ? "Verified"
+                        : property.verificationStatus === "UNDER_REVIEW"
+                          ? "Under Review"
+                          : property.verificationStatus === "REJECTED"
+                            ? "Rejected"
+                            : property.verificationStatus ===
+                                "NEEDS_RESUBMISSION"
+                              ? "Needs Resubmission"
+                              : "Not Verified"}
+                    </span>
+                    <Link
+                      href={`/host/listings/${property.id}/verification`}
+                      className="text-xs text-primary-600 hover:underline font-medium"
+                    >
+                      Verify property
+                    </Link>
+                  </div>
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-bold text-primary-600">
                       {property.currency} {property.price.toLocaleString()}

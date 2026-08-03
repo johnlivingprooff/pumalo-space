@@ -24,7 +24,7 @@ export async function GET() {
     );
 
   const docCount = await prisma.verificationDocument.count({
-    where: { userId: stackUser.id },
+    where: { userId: stackUser.id, propertyId: null },
   });
 
   return NextResponse.json({ ...profile, documentCount: docCount });
@@ -57,7 +57,7 @@ export async function PATCH() {
   }
 
   const docCount = await prisma.verificationDocument.count({
-    where: { userId: stackUser.id },
+    where: { userId: stackUser.id, propertyId: null },
   });
 
   if (docCount === 0) {
