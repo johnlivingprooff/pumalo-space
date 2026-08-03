@@ -75,9 +75,10 @@ export default function EditProfileForm({ profile }: { profile: ProfileData }) {
         <div className="mb-4">
           <Input
             label="Display Name"
-            value={profile.name}
-            disabled
-            hint="Display name is managed by your account provider"
+            value={form.displayName}
+            onChange={set("displayName")}
+            placeholder="Your display name"
+            hint="Shown across the site on your profile, reviews, and messages"
             fullWidth
           />
         </div>
