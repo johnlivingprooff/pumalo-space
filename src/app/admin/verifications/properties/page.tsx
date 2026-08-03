@@ -135,7 +135,7 @@ export default function AdminPropertyVerificationsPage() {
                         </p>
                       </div>
                       <a
-                        href={doc.webContentLink || doc.webViewLink}
+                        href={`/api/admin/documents/${doc.id}/view`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-primary-600 hover:underline ml-4 flex-shrink-0"

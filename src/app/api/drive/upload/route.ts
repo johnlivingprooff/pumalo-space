@@ -5,7 +5,6 @@ import { ensureUserInDatabase } from "@/lib/ensureUser";
 import {
   getAccessToken,
   getFileMetadata,
-  makeFilePublic,
   uploadFileToDrive,
 } from "@/lib/google-drive";
 import { prisma } from "@/lib/prisma";
@@ -93,7 +92,6 @@ export async function POST(request: NextRequest) {
   });
 
   const metadata = await getFileMetadata(accessToken, driveFile.id);
-  const publicViewUrl = await makeFilePublic(accessToken, driveFile.id);
 
   const doc = await prisma.verificationDocument.create({
     data: {
@@ -105,7 +103,7 @@ export async function POST(request: NextRequest) {
       size: Number(metadata.size ?? file.size),
       verificationType: verificationType.toUpperCase() as VerificationType,
       webViewLink: metadata.webViewLink ?? "",
-      webContentLink: publicViewUrl ?? metadata.webContentLink ?? "",
+      webContentLink: metadata.webContentLink ?? "",
     },
   });
 
