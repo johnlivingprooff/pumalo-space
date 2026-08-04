@@ -26,8 +26,8 @@ export default function HostOnboardingPage() {
     propertyCity: "",
     idType: "",
     idNumber: "",
-    agentNumber: "",
-    isAgent: false,
+    ealbNumber: "",
+    traNumber: "",
   });
 
   const steps: OnboardingStep[] = [
@@ -464,55 +464,68 @@ export default function HostOnboardingPage() {
                   </div>
                 </div>
 
-                {(formData.ownershipType === "manage" ||
-                  (formData.ownershipType === "own" && formData.isAgent)) && (
+                {formData.ownershipType === "manage" && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Real Estate Agent Number
-                      {formData.ownershipType === "manage" && (
-                        <span className="text-red-500 ml-1">*</span>
-                      )}
+                      EALB Certificate Number
+                      <span className="text-red-500 ml-1">*</span>
                     </label>
                     <Input
                       type="text"
-                      placeholder="e.g., RA-0001234"
-                      value={formData.agentNumber}
+                      placeholder="e.g., EALB-0001234"
+                      value={formData.ealbNumber}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          agentNumber: e.target.value,
+                          ealbNumber: e.target.value,
                         })
                       }
                     />
                     <p className="mt-1 text-xs text-gray-500">
-                      {formData.ownershipType === "manage"
-                        ? "Required — you're listing property on behalf of an owner."
-                        : "Optional — only if you are a licensed agent."}
+                      Required — you're listing property on behalf of an owner.
+                      This is your Estate Agents Licensing Board certificate
+                      number.
                     </p>
                   </div>
                 )}
 
-                {formData.ownershipType === "own" && (
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.isAgent}
+                {formData.propertyType === "LODGE" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      TRA Number
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="e.g., TRA-0001234"
+                      value={formData.traNumber}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          isAgent: e.target.checked,
-                          agentNumber: e.target.checked
-                            ? formData.agentNumber
-                            : "",
+                          traNumber: e.target.value,
                         })
                       }
-                      className="mt-1 w-4 h-4 text-primary-600 border-gray-300 rounded"
                     />
-                    <span className="text-sm text-gray-700">
-                      I am also a licensed real estate agent
-                    </span>
-                  </label>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Required for short-term / holiday rentals — this is your
+                      Tourism Regulatory Authority registration number.
+                    </p>
+                  </div>
                 )}
+
+                {formData.ownershipType === "own" &&
+                  formData.propertyType !== "LODGE" && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <p className="text-sm text-green-800">
+                        <span className="font-medium">
+                          You're listing as a direct owner.
+                        </span>{" "}
+                        No professional license is needed. When you verify your
+                        property, you'll upload a Certificate of Ownership or
+                        proof of payment for the land.
+                      </p>
+                    </div>
+                  )}
               </div>
 
               <div className="flex items-center gap-4 mt-8">
@@ -526,10 +539,9 @@ export default function HostOnboardingPage() {
                     !formData.idType ||
                     !formData.idNumber ||
                     (formData.ownershipType === "manage" &&
-                      !formData.agentNumber.trim()) ||
-                    (formData.ownershipType === "own" &&
-                      formData.isAgent &&
-                      !formData.agentNumber.trim())
+                      !formData.ealbNumber.trim()) ||
+                    (formData.propertyType === "LODGE" &&
+                      !formData.traNumber.trim())
                   }
                 >
                   Continue

@@ -41,8 +41,9 @@ export async function PATCH() {
     select: {
       verificationStatus: true,
       ownershipType: true,
-      isAgent: true,
-      agentNumber: true,
+      propertyType: true,
+      ealbNumber: true,
+      traNumber: true,
     },
   });
 
@@ -61,14 +62,20 @@ export async function PATCH() {
     );
   }
 
-  // Agents (managers, or owners who flagged themselves as agents) must have a
-  // Real Estate Agent Number on file before their identity can be reviewed.
-  const needsAgentNumber =
-    profile.ownershipType === "manage" ||
-    (profile.ownershipType === "own" && profile.isAgent);
-  if (needsAgentNumber && !profile.agentNumber) {
+  // Agents (managers) must have an EALB certificate number on file, and
+  // short-term operators (LODGE) must have a TRA number, before their identity
+  // can be reviewed.
+  const needsEalb = profile.ownershipType === "manage";
+  const needsTra = profile.propertyType === "LODGE";
+  if (needsEalb && !profile.ealbNumber) {
     return NextResponse.json(
-      { error: "Real Estate Agent Number is required before submitting" },
+      { error: "EALB Certificate Number is required before submitting" },
+      { status: 400 },
+    );
+  }
+  if (needsTra && !profile.traNumber) {
+    return NextResponse.json(
+      { error: "TRA Number is required before submitting" },
       { status: 400 },
     );
   }

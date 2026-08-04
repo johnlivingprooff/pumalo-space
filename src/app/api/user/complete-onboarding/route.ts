@@ -1,7 +1,10 @@
 import { stackServerApp } from "@stack/server";
 import { type NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { isValidAgentNumber, sanitizeAgentNumber } from "@/lib/validation";
+import {
+  isValidLicenseNumber,
+  sanitizeLicenseNumber,
+} from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,8 +36,8 @@ export async function POST(request: NextRequest) {
     const rawPropertyCity = body.propertyCity;
     const rawIdType = body.idType;
     const rawIdNumber = body.idNumber;
-    const rawAgentNumber = body.agentNumber;
-    const rawIsAgent = body.isAgent;
+    const rawEalbNumber = body.ealbNumber;
+    const rawTraNumber = body.traNumber;
 
     const phone = typeof rawPhone === "string" ? rawPhone.trim() : "";
     const bio = typeof rawBio === "string" ? rawBio.trim() : "";
@@ -48,10 +51,10 @@ export async function POST(request: NextRequest) {
       typeof rawPropertyCity === "string" ? rawPropertyCity.trim() : "";
     const idType = typeof rawIdType === "string" ? rawIdType.trim() : "";
     const idNumber = typeof rawIdNumber === "string" ? rawIdNumber.trim() : "";
-    const agentNumber =
-      typeof rawAgentNumber === "string" ? rawAgentNumber.trim() : "";
-    const isAgent =
-      rawIsAgent === true || rawIsAgent === "true" || rawIsAgent === "on";
+    const ealbNumber =
+      typeof rawEalbNumber === "string" ? rawEalbNumber.trim() : "";
+    const traNumber =
+      typeof rawTraNumber === "string" ? rawTraNumber.trim() : "";
 
     const validOwnership = ["own", "manage"];
     const validPropertyTypes = ["RENT", "BUY", "LODGE"];
@@ -74,26 +77,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Agent number required for property managers and owner-agents
-    const needsAgentNumber =
-      ownershipType === "manage" || (ownershipType === "own" && isAgent);
-    const sanitizedAgentNumber = sanitizeAgentNumber(agentNumber);
-    if (needsAgentNumber) {
-      if (!agentNumber) {
-        return NextResponse.json(
-          { error: "Real Estate Agent Number is required" },
-          { status: 400 },
-        );
-      }
-      if (!isValidAgentNumber(agentNumber)) {
-        return NextResponse.json(
-          {
-            error:
-              "Invalid Real Estate Agent Number (use letters and digits only, 4–30 characters)",
-          },
-          { status: 400 },
-        );
-      }
+    // License numbers: EALB for agents managing on behalf of owners, TRA for
+    // short-term / holiday rentals (Airbnb-style).
+    const needsEalb = ownershipType === "manage";
+    const needsTra = propertyType === "LODGE";
+    const sanitizedEalbNumber = sanitizeLicenseNumber(ealbNumber);
+    const sanitizedTraNumber = sanitizeLicenseNumber(traNumber);
+
+    if (needsEalb && !ealbNumber) {
+      return NextResponse.json(
+        { error: "EALB certificate number is required for agents" },
+        { status: 400 },
+      );
+    }
+    if (needsEalb && !isValidLicenseNumber(ealbNumber)) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid EALB certificate number (use letters and digits only, 4–30 characters)",
+        },
+        { status: 400 },
+      );
+    }
+    if (needsTra && !traNumber) {
+      return NextResponse.json(
+        {
+          error:
+            "TRA (Tourism Regulatory Authority) number is required for short-term rentals",
+        },
+        { status: 400 },
+      );
+    }
+    if (needsTra && !isValidLicenseNumber(traNumber)) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid TRA number (use letters and digits only, 4–30 characters)",
+        },
+        { status: 400 },
+      );
     }
 
     // Persist onboarding details and set user as host
@@ -120,8 +142,8 @@ export async function POST(request: NextRequest) {
           idType,
           idNumber,
           ownershipType,
-          isAgent,
-          agentNumber: needsAgentNumber ? sanitizedAgentNumber : null,
+          ealbNumber: needsEalb ? sanitizedEalbNumber : null,
+          traNumber: needsTra ? sanitizedTraNumber : null,
           propertyName,
           propertyType,
           propertyCity,
@@ -130,8 +152,8 @@ export async function POST(request: NextRequest) {
           idType,
           idNumber,
           ownershipType,
-          isAgent,
-          agentNumber: needsAgentNumber ? sanitizedAgentNumber : null,
+          ealbNumber: needsEalb ? sanitizedEalbNumber : null,
+          traNumber: needsTra ? sanitizedTraNumber : null,
           propertyName,
           propertyType,
           propertyCity,

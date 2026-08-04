@@ -14,8 +14,9 @@ export default async function VerificationPage() {
       rejectionReason: true,
       verifiedAt: true,
       ownershipType: true,
-      isAgent: true,
-      agentNumber: true,
+      propertyType: true,
+      ealbNumber: true,
+      traNumber: true,
     },
   });
 
@@ -39,8 +40,9 @@ export default async function VerificationPage() {
       rejectionReason={profile.rejectionReason}
       verifiedAt={profile.verifiedAt?.toISOString() ?? null}
       initialOwnershipType={profile.ownershipType}
-      initialIsAgent={profile.isAgent}
-      initialAgentNumber={profile.agentNumber}
+      initialPropertyType={profile.propertyType}
+      initialEalbNumber={profile.ealbNumber}
+      initialTraNumber={profile.traNumber}
       initialDocuments={documents.map((d) => ({
         ...d,
         createdAt: d.createdAt.toISOString(),

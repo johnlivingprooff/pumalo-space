@@ -23,8 +23,9 @@ interface Verification {
   verificationStatus: string;
   createdAt: string;
   ownershipType: string | null;
-  isAgent: boolean;
-  agentNumber: string | null;
+  propertyType: string | null;
+  ealbNumber: string | null;
+  traNumber: string | null;
   user: {
     id: string;
     name: string;
@@ -100,21 +101,25 @@ export default function AdminVerificationsPage() {
                       className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
                         v.ownershipType === "manage"
                           ? "bg-purple-50 text-purple-700 border border-purple-200/50"
-                          : "bg-blue-50 text-blue-700 border border-blue-200/50"
+                          : v.propertyType === "LODGE"
+                            ? "bg-teal-50 text-teal-700 border border-teal-200/50"
+                            : "bg-blue-50 text-blue-700 border border-blue-200/50"
                       }`}
                     >
                       {v.ownershipType === "manage"
                         ? "Property Agent"
-                        : "Property Owner"}
+                        : v.propertyType === "LODGE"
+                          ? "Short-term Host"
+                          : "Property Owner"}
                     </span>
-                    {v.agentNumber && (
+                    {v.ealbNumber && (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/50">
-                        Agent #: {v.agentNumber}
+                        EALB #: {v.ealbNumber}
                       </span>
                     )}
-                    {v.isAgent && v.ownershipType !== "manage" && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
-                        Owner & Agent
+                    {v.traNumber && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-cyan-50 text-cyan-700 border border-cyan-200/50">
+                        TRA #: {v.traNumber}
                       </span>
                     )}
                     <span className="text-xs text-gray-400">

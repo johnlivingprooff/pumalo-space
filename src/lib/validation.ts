@@ -16,14 +16,14 @@ export function isValidPhone(phone: string): boolean {
   return phoneRegex.test(phone);
 }
 
-// Real Estate Agent Number validation (basic format: letters, digits, dashes)
-export function isValidAgentNumber(agentNumber: string): boolean {
-  const agentNumberRegex = /^[A-Za-z0-9-]{4,30}$/;
-  return agentNumberRegex.test(agentNumber.trim());
+// Professional license number validation (EALB / TRA - basic format)
+export function isValidLicenseNumber(licenseNumber: string): boolean {
+  const licenseNumberRegex = /^[A-Za-z0-9-]{4,30}$/;
+  return licenseNumberRegex.test(licenseNumber.trim());
 }
 
-// Sanitize an agent number for storage (trim, strip to safe chars)
-export function sanitizeAgentNumber(input: string): string {
+// Sanitize a license number for storage (trim, strip to safe chars)
+export function sanitizeLicenseNumber(input: string): string {
   return input
     .trim()
     .toUpperCase()

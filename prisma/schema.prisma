@@ -208,8 +208,8 @@ model HostProfile {
   idType         String
   idNumber       String
   ownershipType  String? // "own" | "manage"
-  isAgent        Boolean  @default(false) // owner who is also a licensed agent
-  agentNumber    String? // Real Estate Agent Number (required for agents)
+  ealbNumber     String? // Estate Agents Licensing Board (agents managing on behalf of owners)
+  traNumber      String? // Tourism Regulatory Authority (short-term / holiday rentals)
   propertyName   String?
   propertyType   String? // "RENT" | "BUY" | "LODGE"
   propertyCity   String?

@@ -215,7 +215,8 @@ export default function DriveUploader({
                   <>
                     <option value="title_deed">Title Deed</option>
                     <option value="ownership_certificate">
-                      Certificate of Ownership / Licence to Sell
+                      Certificate of Ownership / Licence to Sell + land payment
+                      receipt
                     </option>
                     <option value="other">Other</option>
                   </>
