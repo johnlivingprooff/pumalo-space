@@ -22,6 +22,9 @@ interface Verification {
   id: string;
   verificationStatus: string;
   createdAt: string;
+  ownershipType: string | null;
+  isAgent: boolean;
+  agentNumber: string | null;
   user: {
     id: string;
     name: string;
@@ -92,11 +95,34 @@ export default function AdminVerificationsPage() {
                 <div>
                   <p className="font-medium text-gray-900">{v.user.name}</p>
                   <p className="text-sm text-gray-500 mt-0.5">{v.user.email}</p>
-                  <p className="text-xs text-gray-400 mt-1.5">
-                    {v.user.verificationDocuments.length} document(s) uploaded
-                    &#183; Submitted{" "}
-                    {new Date(v.createdAt).toLocaleDateString()}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
+                        v.ownershipType === "manage"
+                          ? "bg-purple-50 text-purple-700 border border-purple-200/50"
+                          : "bg-blue-50 text-blue-700 border border-blue-200/50"
+                      }`}
+                    >
+                      {v.ownershipType === "manage"
+                        ? "Property Agent"
+                        : "Property Owner"}
+                    </span>
+                    {v.agentNumber && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/50">
+                        Agent #: {v.agentNumber}
+                      </span>
+                    )}
+                    {v.isAgent && v.ownershipType !== "manage" && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+                        Owner & Agent
+                      </span>
+                    )}
+                    <span className="text-xs text-gray-400">
+                      {v.user.verificationDocuments.length} document(s) uploaded
+                      &#183; Submitted{" "}
+                      {new Date(v.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50/70 backdrop-blur-sm text-amber-700 rounded-lg text-xs font-medium border border-amber-200/30 shrink-0">
                   <RefreshIcon className="w-3 h-3" />

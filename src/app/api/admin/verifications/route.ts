@@ -15,6 +15,9 @@ export async function GET() {
       id: true,
       verificationStatus: true,
       createdAt: true,
+      ownershipType: true,
+      isAgent: true,
+      agentNumber: true,
       user: {
         select: {
           id: true,

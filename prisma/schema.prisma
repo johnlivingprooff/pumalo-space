@@ -208,6 +208,8 @@ model HostProfile {
   idType         String
   idNumber       String
   ownershipType  String? // "own" | "manage"
+  isAgent        Boolean  @default(false) // owner who is also a licensed agent
+  agentNumber    String? // Real Estate Agent Number (required for agents)
   propertyName   String?
   propertyType   String? // "RENT" | "BUY" | "LODGE"
   propertyCity   String?
@@ -228,6 +230,7 @@ model HostProfile {
 enum VerificationType {
   ID
   TITLE_DEED
+  OWNERSHIP_CERTIFICATE
   OTHER
 }
 

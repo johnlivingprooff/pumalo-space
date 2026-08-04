@@ -16,6 +16,21 @@ export function isValidPhone(phone: string): boolean {
   return phoneRegex.test(phone);
 }
 
+// Real Estate Agent Number validation (basic format: letters, digits, dashes)
+export function isValidAgentNumber(agentNumber: string): boolean {
+  const agentNumberRegex = /^[A-Za-z0-9-]{4,30}$/;
+  return agentNumberRegex.test(agentNumber.trim());
+}
+
+// Sanitize an agent number for storage (trim, strip to safe chars)
+export function sanitizeAgentNumber(input: string): string {
+  return input
+    .trim()
+    .toUpperCase()
+    .slice(0, 30)
+    .replace(/[^A-Z0-9-]/g, "");
+}
+
 // Sanitize string input (remove potentially dangerous characters)
 export function sanitizeString(input: string, maxLength = 1000): string {
   if (typeof input !== "string") return "";

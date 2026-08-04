@@ -1,6 +1,7 @@
 import { stackServerApp } from "@stack/server";
 import { type NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { isValidAgentNumber, sanitizeAgentNumber } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,6 +33,8 @@ export async function POST(request: NextRequest) {
     const rawPropertyCity = body.propertyCity;
     const rawIdType = body.idType;
     const rawIdNumber = body.idNumber;
+    const rawAgentNumber = body.agentNumber;
+    const rawIsAgent = body.isAgent;
 
     const phone = typeof rawPhone === "string" ? rawPhone.trim() : "";
     const bio = typeof rawBio === "string" ? rawBio.trim() : "";
@@ -45,6 +48,10 @@ export async function POST(request: NextRequest) {
       typeof rawPropertyCity === "string" ? rawPropertyCity.trim() : "";
     const idType = typeof rawIdType === "string" ? rawIdType.trim() : "";
     const idNumber = typeof rawIdNumber === "string" ? rawIdNumber.trim() : "";
+    const agentNumber =
+      typeof rawAgentNumber === "string" ? rawAgentNumber.trim() : "";
+    const isAgent =
+      rawIsAgent === true || rawIsAgent === "true" || rawIsAgent === "on";
 
     const validOwnership = ["own", "manage"];
     const validPropertyTypes = ["RENT", "BUY", "LODGE"];
@@ -65,6 +72,28 @@ export async function POST(request: NextRequest) {
         { error: "Missing or invalid required fields" },
         { status: 400 },
       );
+    }
+
+    // Agent number required for property managers and owner-agents
+    const needsAgentNumber =
+      ownershipType === "manage" || (ownershipType === "own" && isAgent);
+    const sanitizedAgentNumber = sanitizeAgentNumber(agentNumber);
+    if (needsAgentNumber) {
+      if (!agentNumber) {
+        return NextResponse.json(
+          { error: "Real Estate Agent Number is required" },
+          { status: 400 },
+        );
+      }
+      if (!isValidAgentNumber(agentNumber)) {
+        return NextResponse.json(
+          {
+            error:
+              "Invalid Real Estate Agent Number (use letters and digits only, 4–30 characters)",
+          },
+          { status: 400 },
+        );
+      }
     }
 
     // Persist onboarding details and set user as host
@@ -91,6 +120,8 @@ export async function POST(request: NextRequest) {
           idType,
           idNumber,
           ownershipType,
+          isAgent,
+          agentNumber: needsAgentNumber ? sanitizedAgentNumber : null,
           propertyName,
           propertyType,
           propertyCity,
@@ -99,6 +130,8 @@ export async function POST(request: NextRequest) {
           idType,
           idNumber,
           ownershipType,
+          isAgent,
+          agentNumber: needsAgentNumber ? sanitizedAgentNumber : null,
           propertyName,
           propertyType,
           propertyCity,

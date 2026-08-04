@@ -12,7 +12,7 @@ export default async function VerificationUploadPage() {
       <div className="max-w-2xl mx-auto px-4 py-10">
         <Link
           href="/host/verification"
-          className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-6"
+          className="text-sm text-gray-900 font-medium hover:text-gray-600 flex items-center gap-1 mb-6"
         >
           <svg
             className="w-4 h-4"

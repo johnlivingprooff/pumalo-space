@@ -26,6 +26,8 @@ export default function HostOnboardingPage() {
     propertyCity: "",
     idType: "",
     idNumber: "",
+    agentNumber: "",
+    isAgent: false,
   });
 
   const steps: OnboardingStep[] = [
@@ -461,6 +463,56 @@ export default function HostOnboardingPage() {
                     </div>
                   </div>
                 </div>
+
+                {(formData.ownershipType === "manage" ||
+                  (formData.ownershipType === "own" && formData.isAgent)) && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Real Estate Agent Number
+                      {formData.ownershipType === "manage" && (
+                        <span className="text-red-500 ml-1">*</span>
+                      )}
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="e.g., RA-0001234"
+                      value={formData.agentNumber}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          agentNumber: e.target.value,
+                        })
+                      }
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      {formData.ownershipType === "manage"
+                        ? "Required — you're listing property on behalf of an owner."
+                        : "Optional — only if you are a licensed agent."}
+                    </p>
+                  </div>
+                )}
+
+                {formData.ownershipType === "own" && (
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.isAgent}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          isAgent: e.target.checked,
+                          agentNumber: e.target.checked
+                            ? formData.agentNumber
+                            : "",
+                        })
+                      }
+                      className="mt-1 w-4 h-4 text-primary-600 border-gray-300 rounded"
+                    />
+                    <span className="text-sm text-gray-700">
+                      I am also a licensed real estate agent
+                    </span>
+                  </label>
+                )}
               </div>
 
               <div className="flex items-center gap-4 mt-8">
@@ -470,7 +522,15 @@ export default function HostOnboardingPage() {
                 <Button
                   variant="primary"
                   onClick={handleNext}
-                  disabled={!formData.idType || !formData.idNumber}
+                  disabled={
+                    !formData.idType ||
+                    !formData.idNumber ||
+                    (formData.ownershipType === "manage" &&
+                      !formData.agentNumber.trim()) ||
+                    (formData.ownershipType === "own" &&
+                      formData.isAgent &&
+                      !formData.agentNumber.trim())
+                  }
                 >
                   Continue
                 </Button>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type VerificationType = "id" | "title_deed" | "other";
+type VerificationType = "id" | "title_deed" | "ownership_certificate" | "other";
 
 interface Document {
   id: string;
@@ -161,7 +161,7 @@ export default function DriveUploader({
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <h2 className="text-2xl font-bold">
+      <h2 className="text-2xl font-bold text-gray-900">
         {title ?? "Verification Documents"}
       </h2>
 
@@ -173,7 +173,7 @@ export default function DriveUploader({
 
       {!connected ? (
         <div className="border rounded-lg p-6 text-center space-y-4">
-          <p className="text-gray-800">
+          <p className="text-gray-900">
             Connect your Google Drive to upload verification documents
           </p>
           <button
@@ -201,17 +201,30 @@ export default function DriveUploader({
             </div>
 
             <div className="space-y-3">
-              <label className="block text-sm font-medium">Document Type</label>
+              <label className="block text-sm font-medium text-gray-900">
+                Document Type
+              </label>
               <select
                 value={verificationType}
                 onChange={(e) =>
                   setVerificationType(e.target.value as VerificationType)
                 }
-                className="w-full border rounded px-3 py-2"
+                className="w-full border rounded px-3 py-2 bg-white text-gray-900"
               >
-                <option value="id">ID Document</option>
-                <option value="title_deed">Title Deed</option>
-                <option value="other">Other</option>
+                {propertyId ? (
+                  <>
+                    <option value="title_deed">Title Deed</option>
+                    <option value="ownership_certificate">
+                      Certificate of Ownership / Licence to Sell
+                    </option>
+                    <option value="other">Other</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="id">ID Document</option>
+                    <option value="other">Other</option>
+                  </>
+                )}
               </select>
 
               <input
@@ -233,9 +246,9 @@ export default function DriveUploader({
           </div>
 
           <div className="space-y-3">
-            <h3 className="font-medium">Your Documents</h3>
+            <h3 className="font-semibold text-gray-900">Your Documents</h3>
             {documents.length === 0 ? (
-              <p className="text-gray-700 text-sm">No documents uploaded yet</p>
+              <p className="text-gray-900 text-sm">No documents uploaded yet</p>
             ) : (
               <div className="space-y-2">
                 {documents.map((doc) => (
@@ -244,8 +257,10 @@ export default function DriveUploader({
                     className="border rounded p-4 flex justify-between items-center"
                   >
                     <div>
-                      <p className="font-medium">{doc.fileName}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium text-gray-900">
+                        {doc.fileName}
+                      </p>
+                      <p className="text-sm text-gray-900">
                         {doc.verificationType} •{" "}
                         {new Date(doc.createdAt).toLocaleDateString()}
                       </p>

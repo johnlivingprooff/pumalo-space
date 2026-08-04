@@ -24,6 +24,9 @@ interface Props {
   initialStatus: VerificationStatus;
   rejectionReason: string | null;
   verifiedAt: string | null;
+  initialOwnershipType: string | null;
+  initialIsAgent: boolean;
+  initialAgentNumber: string | null;
   initialDocuments: Document[];
 }
 
@@ -76,20 +79,64 @@ export function VerificationClient({
   initialStatus,
   rejectionReason,
   verifiedAt,
+  initialOwnershipType,
+  initialIsAgent,
+  initialAgentNumber,
   initialDocuments,
 }: Props) {
   const [status, setStatus] = useState(initialStatus);
   const [documents] = useState(initialDocuments);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [isAgent, setIsAgent] = useState(initialIsAgent);
+  const [agentNumber, setAgentNumber] = useState(initialAgentNumber ?? "");
+  const [savingAgent, setSavingAgent] = useState(false);
+  const [agentError, setAgentError] = useState("");
+  const [agentSaved, setAgentSaved] = useState(false);
+
+  const isManager = initialOwnershipType === "manage";
+  const agentRequired =
+    isManager || (initialOwnershipType === "own" && isAgent);
 
   const cfg = STATUS_CONFIG[status];
   const canSubmit = submittable.has(status) && documents.length > 0;
 
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    setError("");
+  const saveAgentNumber = async () => {
+    setSavingAgent(true);
+    setAgentError("");
+    setAgentSaved(false);
     try {
+      const res = await fetch("/api/host/verification/agent-number", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isAgent, agentNumber }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setAgentError(data.error || "Failed to save agent number");
+        return;
+      }
+      setAgentSaved(true);
+    } catch {
+      setAgentError("Network error. Please try again.");
+    } finally {
+      setSavingAgent(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setError("");
+    if (agentRequired && !agentNumber.trim()) {
+      setError(
+        isManager
+          ? "Enter your Real Estate Agent Number before submitting."
+          : "Enter your Real Estate Agent Number before submitting.",
+      );
+      return;
+    }
+    setSubmitting(true);
+    try {
+      if (agentRequired) await saveAgentNumber();
       const res = await fetch("/api/host/verification", { method: "PATCH" });
       const data = await res.json();
       if (!res.ok) {
@@ -160,6 +207,94 @@ export function VerificationClient({
               </p>
             )}
         </div>
+
+        {/* Professional details */}
+        {initialOwnershipType && (
+          <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-gray-900">
+                Professional Details
+              </h2>
+              <span className="text-sm text-gray-500 capitalize">
+                {isManager ? "Property Agent" : "Property Owner"}
+              </span>
+            </div>
+
+            {isManager ? (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-900">
+                  Real Estate Agent Number
+                  <span className="text-red-500 ml-1">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={agentNumber}
+                  onChange={(e) => {
+                    setAgentNumber(e.target.value);
+                    setAgentSaved(false);
+                  }}
+                  placeholder="e.g., RA-0001234"
+                  className="block w-full px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 focus:ring-primary-500 transition-colors duration-200 bg-white text-gray-900 placeholder:text-gray-400"
+                />
+                <p className="text-xs text-gray-500">
+                  Required — you're listing property on behalf of an owner. An
+                  admin will verify this number with your documents.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isAgent}
+                    onChange={(e) => {
+                      setIsAgent(e.target.checked);
+                      setAgentSaved(false);
+                    }}
+                    className="mt-1 w-4 h-4 text-primary-600 border-gray-300 rounded"
+                  />
+                  <span className="text-sm text-gray-900">
+                    I am also a licensed real estate agent
+                  </span>
+                </label>
+                {isAgent && (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-900">
+                      Real Estate Agent Number
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={agentNumber}
+                      onChange={(e) => {
+                        setAgentNumber(e.target.value);
+                        setAgentSaved(false);
+                      }}
+                      placeholder="e.g., RA-0001234"
+                      className="block w-full px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 focus:ring-primary-500 transition-colors duration-200 bg-white text-gray-900 placeholder:text-gray-400"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {agentError && <p className="text-sm text-red-600">{agentError}</p>}
+            {agentSaved && (
+              <p className="text-sm text-green-600">Agent number saved.</p>
+            )}
+
+            <div className="flex items-center gap-3 justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={saveAgentNumber}
+                isLoading={savingAgent}
+              >
+                Save Agent Number
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Documents */}
         <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">

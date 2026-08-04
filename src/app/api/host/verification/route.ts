@@ -38,7 +38,12 @@ export async function PATCH() {
 
   const profile = await prisma.hostProfile.findUnique({
     where: { userId: stackUser.id },
-    select: { verificationStatus: true },
+    select: {
+      verificationStatus: true,
+      ownershipType: true,
+      isAgent: true,
+      agentNumber: true,
+    },
   });
 
   if (!profile)
@@ -52,6 +57,18 @@ export async function PATCH() {
   if (!submittable.includes(profile.verificationStatus)) {
     return NextResponse.json(
       { error: "Cannot submit from current status" },
+      { status: 400 },
+    );
+  }
+
+  // Agents (managers, or owners who flagged themselves as agents) must have a
+  // Real Estate Agent Number on file before their identity can be reviewed.
+  const needsAgentNumber =
+    profile.ownershipType === "manage" ||
+    (profile.ownershipType === "own" && profile.isAgent);
+  if (needsAgentNumber && !profile.agentNumber) {
+    return NextResponse.json(
+      { error: "Real Estate Agent Number is required before submitting" },
       { status: 400 },
     );
   }
